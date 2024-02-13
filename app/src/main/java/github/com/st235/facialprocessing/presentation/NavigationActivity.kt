@@ -10,19 +10,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import github.com.st235.facialprocessing.presentation.ui.theme.FacialProcessingTheme
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import github.com.st235.facialprocessing.presentation.base.theme.FacialProcessingTheme
+import github.com.st235.facialprocessing.presentation.screens.Screen
+import github.com.st235.facialprocessing.presentation.screens.clustering_feed.ClusteringFeed
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             FacialProcessingTheme {
-                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    AppNavHost(
+                        startDestination = Screen.ClusteringFeed.route,
+                        navController = rememberNavController()
+                    )
                 }
             }
         }
@@ -30,17 +38,21 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
+fun AppNavHost(
+    startDestination: String,
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+) {
+    NavHost(
+        startDestination = startDestination,
+        navController = navController,
         modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    FacialProcessingTheme {
-        Greeting("Android")
+    ) {
+        composable(Screen.ClusteringFeed.route) {
+            ClusteringFeed(
+                navController = navController,
+                modifier = modifier
+            )
+        }
     }
 }

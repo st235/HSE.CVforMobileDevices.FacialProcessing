@@ -1,4 +1,4 @@
-package github.com.st235.facialprocessing.presentation.ui.theme
+package github.com.st235.facialprocessing.presentation.base.theme
 
 import androidx.compose.ui.graphics.Color
 
