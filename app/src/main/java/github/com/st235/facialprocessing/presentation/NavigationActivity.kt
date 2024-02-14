@@ -17,6 +17,8 @@ import androidx.navigation.compose.rememberNavController
 import github.com.st235.facialprocessing.presentation.base.theme.FacialProcessingTheme
 import github.com.st235.facialprocessing.presentation.screens.Screen
 import github.com.st235.facialprocessing.presentation.screens.clustering_feed.ClusteringFeed
+import github.com.st235.facialprocessing.presentation.screens.clustering_feed.ClusteringViewModel
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +51,10 @@ fun AppNavHost(
         modifier = modifier
     ) {
         composable(Screen.ClusteringFeed.route) {
+            val viewModel = koinViewModel<ClusteringViewModel>()
+
             ClusteringFeed(
+                viewModel = viewModel,
                 navController = navController,
                 modifier = modifier
             )
