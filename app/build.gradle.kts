@@ -78,4 +78,10 @@ dependencies {
     implementation("androidx.room:room-runtime:2.6.1")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
+
+    // TF Lite 2.15.0 and above requires min api 26.
+    implementation("org.tensorflow:tensorflow-lite:2.14.0")
+    implementation("org.tensorflow:tensorflow-lite-gpu:2.14.0")
+    implementation("org.tensorflow:tensorflow-lite-gpu-api:2.14.0")
+    implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
 }
