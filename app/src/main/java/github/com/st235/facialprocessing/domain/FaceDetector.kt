@@ -21,8 +21,8 @@ import kotlin.math.max
 import kotlin.math.min
 
 class FaceDetector(
-    private val context: Context,
     @RawRes private val rawModelFile: Int,
+    interpreterFactory: InterpreterFactory,
     private val inputTensorIndex: Int = DEFAULT_INPUT_TENSOR_INDEX,
 ) {
     private companion object {
@@ -185,19 +185,7 @@ class FaceDetector(
     private val outputMap: Map<Int, ByteBuffer>
 
     init {
-        val options = Interpreter.Options().setNumThreads(DEFAULT_THREADS_NUMBER)
-
-        val compatList = CompatibilityList()
-        val canUseGPU = compatList.isDelegateSupportedOnThisDevice
-        if (canUseGPU) {
-            val gpuDelegateOptions = GpuDelegateFactory.Options()
-            gpuDelegateOptions.setInferencePreference(GpuDelegateFactory.Options.INFERENCE_PREFERENCE_SUSTAINED_SPEED)
-            options.addDelegate(GpuDelegate(gpuDelegateOptions))
-        }
-
-        val model = loadModelFromRawResources(context, rawModelFile)
-        interpreter = Interpreter(model, options)
-        interpreter.allocateTensors()
+        interpreter = interpreterFactory.create(rawModelFile)
 
         val inputTensor = interpreter.getInputTensor(inputTensorIndex)
 
