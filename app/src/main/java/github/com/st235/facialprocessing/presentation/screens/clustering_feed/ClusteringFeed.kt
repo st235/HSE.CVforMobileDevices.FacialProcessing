@@ -18,10 +18,12 @@ import github.com.st235.facialprocessing.R
 import github.com.st235.facialprocessing.domain.AgeExtractor
 import github.com.st235.facialprocessing.domain.EmotionExtractor
 import github.com.st235.facialprocessing.domain.FaceDetector
+import github.com.st235.facialprocessing.domain.FaceEmbeddingsExtractor
 import github.com.st235.facialprocessing.domain.FacialAttributesExtractor
 import github.com.st235.facialprocessing.domain.GenderExtractor
 import github.com.st235.facialprocessing.domain.InterpreterFactory
 import github.com.st235.facialprocessing.presentation.widgets.FaceOverlayPainter
+import java.util.Arrays
 
 @Composable
 fun ClusteringFeed(
@@ -37,6 +39,7 @@ fun ClusteringFeed(
     val genderExtractor = GenderExtractor(interpreterFactory)
     val emotionExtractor = EmotionExtractor(interpreterFactory)
     val facialAttributesExtractor = FacialAttributesExtractor(interpreterFactory)
+    val faceEmbeddingsExtractor = FaceEmbeddingsExtractor(interpreterFactory)
 
     val boxes by remember(true) {
         mutableStateOf(detector.detect(bitmap))
@@ -48,7 +51,10 @@ fun ClusteringFeed(
         val gender = genderExtractor.predict(face)
         val emotion = emotionExtractor.predict(face)
         val facialAttributes = facialAttributesExtractor.predict(face)
+        val embeddings = faceEmbeddingsExtractor.predict(face)
+        Log.d("HelloWorld", "Face: $box")
         Log.d("HelloWorld", "Age: $age, Gender $gender, Emotion $emotion, Facial Attributes: $facialAttributes")
+        Log.d("HelloWorld", "Embeddings: ${Arrays.toString(embeddings)}")
     }
 
     Image(painter = FaceOverlayPainter(image = bitmap.asImageBitmap(), faces = boxes.map { it.asFace() }, faceHighlightCornerRadiusPx = 64f, faceHighlightColor = Color.Yellow, faceHighlightThickness = 8f), contentDescription = null,
