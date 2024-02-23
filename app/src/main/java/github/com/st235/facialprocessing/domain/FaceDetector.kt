@@ -26,7 +26,6 @@ class FaceDetector(
     private val inputTensorIndex: Int = DEFAULT_INPUT_TENSOR_INDEX,
 ) {
     private companion object {
-        const val DEFAULT_THREADS_NUMBER = 4
         const val DEFAULT_INPUT_TENSOR_INDEX = 0
 
         // Default for Bitmap.

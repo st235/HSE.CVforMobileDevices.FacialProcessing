@@ -18,6 +18,7 @@ import github.com.st235.facialprocessing.R
 import github.com.st235.facialprocessing.domain.AgeExtractor
 import github.com.st235.facialprocessing.domain.EmotionExtractor
 import github.com.st235.facialprocessing.domain.FaceDetector
+import github.com.st235.facialprocessing.domain.FacialAttributesExtractor
 import github.com.st235.facialprocessing.domain.GenderExtractor
 import github.com.st235.facialprocessing.domain.InterpreterFactory
 import github.com.st235.facialprocessing.presentation.widgets.FaceOverlayPainter
@@ -35,6 +36,7 @@ fun ClusteringFeed(
     val ageExtractor = AgeExtractor(interpreterFactory)
     val genderExtractor = GenderExtractor(interpreterFactory)
     val emotionExtractor = EmotionExtractor(interpreterFactory)
+    val facialAttributesExtractor = FacialAttributesExtractor(interpreterFactory)
 
     val boxes by remember(true) {
         mutableStateOf(detector.detect(bitmap))
@@ -45,7 +47,8 @@ fun ClusteringFeed(
         val age = ageExtractor.predict(face)
         val gender = genderExtractor.predict(face)
         val emotion = emotionExtractor.predict(face)
-        Log.d("HelloWorld", "Age: $age, Gender $gender, Emotion $emotion")
+        val facialAttributes = facialAttributesExtractor.predict(face)
+        Log.d("HelloWorld", "Age: $age, Gender $gender, Emotion $emotion, Facial Attributes: $facialAttributes")
     }
 
     Image(painter = FaceOverlayPainter(image = bitmap.asImageBitmap(), faces = boxes.map { it.asFace() }, faceHighlightCornerRadiusPx = 64f, faceHighlightColor = Color.Yellow, faceHighlightThickness = 8f), contentDescription = null,
