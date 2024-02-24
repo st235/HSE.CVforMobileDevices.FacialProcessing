@@ -1,6 +1,7 @@
 package github.com.st235.facialprocessing.domain
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.annotation.FloatRange
 import github.com.st235.facialprocessing.R
 import org.tensorflow.lite.Interpreter
@@ -8,13 +9,14 @@ import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
+import java.util.Arrays
 
 class FacialAttributesExtractor(
     interpreterFactory: InterpreterFactory,
-    @FloatRange(from = 0.0, to = 1.0) private val eyeglassesThreshold: Float = 0.5f,
-    @FloatRange(from = 0.0, to = 1.0) private val mustacheThreshold: Float = 0.5f,
-    @FloatRange(from = 0.0, to = 1.0) private val beardThreshold: Float = 0.5f,
-    @FloatRange(from = 0.0, to = 1.0) private val smilingThreshold: Float = 0.5f,
+    @FloatRange(from = 0.0, to = 1.0) private val eyeglassesThreshold: Float = 0.0191f,
+    @FloatRange(from = 0.0, to = 1.0) private val mustacheThreshold: Float = 0.07f,
+    @FloatRange(from = 0.0, to = 1.0) private val noBeardThreshold: Float = 0.87f,
+    @FloatRange(from = 0.0, to = 1.0) private val smilingThreshold: Float = 0.41f,
 ) {
 
     private companion object {
@@ -45,10 +47,12 @@ class FacialAttributesExtractor(
             facialAttributesOutputArray
         )
 
+        Log.d("HelloWorld", Arrays.toString(facialAttributesOutputArray[0]))
+
         return FacialAttributes(
             hasEyeglasses = facialAttributesOutputArray[0][0] > eyeglassesThreshold,
             hasMustache = facialAttributesOutputArray[0][1] > mustacheThreshold,
-            hasBeard = (1f - facialAttributesOutputArray[0][2]) > beardThreshold,
+            hasBeard = facialAttributesOutputArray[0][2] < noBeardThreshold,
             isSmiling = facialAttributesOutputArray[0][3] > smilingThreshold,
         )
     }
