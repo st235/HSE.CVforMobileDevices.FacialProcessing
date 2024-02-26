@@ -13,10 +13,10 @@ import java.util.Arrays
 
 class FacialAttributesExtractor(
     interpreterFactory: InterpreterFactory,
-    @FloatRange(from = 0.0, to = 1.0) private val eyeglassesThreshold: Float = 0.0191f,
-    @FloatRange(from = 0.0, to = 1.0) private val mustacheThreshold: Float = 0.07f,
-    @FloatRange(from = 0.0, to = 1.0) private val noBeardThreshold: Float = 0.87f,
-    @FloatRange(from = 0.0, to = 1.0) private val smilingThreshold: Float = 0.41f,
+    @FloatRange(from = 0.0, to = 1.0) private val eyeglassesThreshold: Float = 0.4f,
+    @FloatRange(from = 0.0, to = 1.0) private val mustacheThreshold: Float = 0.4f,
+    @FloatRange(from = 0.0, to = 1.0) private val noBeardThreshold: Float = 0.4f,
+    @FloatRange(from = 0.0, to = 1.0) private val smilingThreshold: Float = 0.4f,
 ) {
 
     private companion object {
@@ -36,7 +36,7 @@ class FacialAttributesExtractor(
             .add(NormalizeOp(0f, 255f))
             .build()
 
-    private val interpreter: Interpreter = interpreterFactory.create(R.raw.model_mobilenetv3_large_eyeglasses_mustache_nobeard_smiling)
+    private val interpreter: Interpreter = interpreterFactory.create(R.raw.model_mobilenetv3_large_acc087_eyeglasses_mustache_nobeard_smiling)
 
     fun predict(image: Bitmap): FacialAttributes {
         val tensorInputImage = TensorImage.fromBitmap(image)
@@ -46,8 +46,6 @@ class FacialAttributesExtractor(
             processedImageBuffer,
             facialAttributesOutputArray
         )
-
-        Log.d("HelloWorld", Arrays.toString(facialAttributesOutputArray[0]))
 
         return FacialAttributes(
             hasEyeglasses = facialAttributesOutputArray[0][0] > eyeglassesThreshold,
