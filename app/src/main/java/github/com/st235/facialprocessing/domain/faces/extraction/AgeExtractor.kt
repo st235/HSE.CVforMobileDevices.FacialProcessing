@@ -1,4 +1,4 @@
-package github.com.st235.facialprocessing.domain.faces
+package github.com.st235.facialprocessing.domain.faces.extraction
 
 import android.graphics.Bitmap
 import androidx.annotation.WorkerThread
@@ -11,22 +11,13 @@ import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
 
 @WorkerThread
-class EmotionExtractor(
+class AgeExtractor(
     interpreterFactory: InterpreterFactory
 ) {
-    private companion object {
-        const val INPUT_IMAGE_SIZE = 224
-    }
 
-    enum class Emotion(val index: Int) {
-        ANGER(0),
-        DISGUST(1),
-        FEAR(2),
-        HAPPINESS(3),
-        NEUTRAL(4),
-        SADNESS(5),
-        SURPRISE(6),
-        UNKNOWN(-1),
+    private companion object {
+        const val INPUT_IMAGE_SIZE = 200
+        const val SCALE = 116
     }
 
     private val inputImageProcessor =
@@ -35,19 +26,17 @@ class EmotionExtractor(
             .add(NormalizeOp(0f, 255f))
             .build()
 
-    private val interpreter: Interpreter = interpreterFactory.create(R.raw.emotions_mobilenet_7)
+    private val interpreter: Interpreter = interpreterFactory.create(R.raw.model_age)
 
-    fun predict(image: Bitmap): Emotion {
+    fun predict(image: Bitmap): Float {
         val tensorInputImage = TensorImage.fromBitmap(image)
-        val emotionsOutputArray = Array(1){ FloatArray(7) }
+        val ageOutputArray = Array(1){ FloatArray(1) }
         val processedImageBuffer = inputImageProcessor.process(tensorInputImage).buffer
         interpreter.run(
             processedImageBuffer,
-            emotionsOutputArray
+            ageOutputArray
         )
-
-        val maxIndex = emotionsOutputArray[0].indices.maxBy { emotionsOutputArray[0][it] }
-        return Emotion.entries.find { it.index == maxIndex } ?: Emotion.UNKNOWN
+        return ageOutputArray[0][0] * SCALE
     }
 
 }

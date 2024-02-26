@@ -1,10 +1,10 @@
-package github.com.st235.facialprocessing.domain.faces
+package github.com.st235.facialprocessing.domain.faces.detection
 
 import android.graphics.Bitmap
 import androidx.annotation.WorkerThread
 import github.com.st235.facialprocessing.R
-import github.com.st235.facialprocessing.domain.faces.FaceDetector.Box.Companion.adjustLetterBoxPadding
-import github.com.st235.facialprocessing.domain.faces.FaceDetector.Box.Companion.clip
+import github.com.st235.facialprocessing.domain.faces.detection.FaceDetector.Box.Companion.adjustLetterBoxPadding
+import github.com.st235.facialprocessing.domain.faces.detection.FaceDetector.Box.Companion.clip
 import github.com.st235.facialprocessing.utils.clamp
 import github.com.st235.facialprocessing.utils.scaleLetterBox
 import github.com.st235.facialprocessing.utils.sigmoid

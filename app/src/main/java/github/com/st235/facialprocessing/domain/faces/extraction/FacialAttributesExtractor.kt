@@ -1,4 +1,4 @@
-package github.com.st235.facialprocessing.domain.faces
+package github.com.st235.facialprocessing.domain.faces.extraction
 
 import android.graphics.Bitmap
 import androidx.annotation.FloatRange

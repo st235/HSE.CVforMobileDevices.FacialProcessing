@@ -1,4 +1,4 @@
-package github.com.st235.facialprocessing.domain.faces
+package github.com.st235.facialprocessing.domain.model
 
 data class FaceDescriptor(
     val region: Region,

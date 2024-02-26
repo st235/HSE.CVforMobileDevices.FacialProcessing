@@ -1,4 +1,4 @@
-package github.com.st235.facialprocessing.domain.faces
+package github.com.st235.facialprocessing.domain.faces.extraction
 
 import android.graphics.Bitmap
 import androidx.annotation.WorkerThread
@@ -11,13 +11,11 @@ import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
 
 @WorkerThread
-class AgeExtractor(
+class FaceEmbeddingsExtractor(
     interpreterFactory: InterpreterFactory
 ) {
-
     private companion object {
-        const val INPUT_IMAGE_SIZE = 200
-        const val SCALE = 116
+        const val INPUT_IMAGE_SIZE = 112
     }
 
     private val inputImageProcessor =
@@ -26,17 +24,18 @@ class AgeExtractor(
             .add(NormalizeOp(0f, 255f))
             .build()
 
-    private val interpreter: Interpreter = interpreterFactory.create(R.raw.model_age)
+    private val interpreter: Interpreter = interpreterFactory.create(R.raw.model_face_net_mobile)
 
-    fun predict(image: Bitmap): Float {
+    fun predict(image: Bitmap): FloatArray {
         val tensorInputImage = TensorImage.fromBitmap(image)
-        val ageOutputArray = Array(1){ FloatArray(1) }
+        val faceEmbeddingsOutputArray = Array(1){ FloatArray(192) }
         val processedImageBuffer = inputImageProcessor.process(tensorInputImage).buffer
         interpreter.run(
             processedImageBuffer,
-            ageOutputArray
+            faceEmbeddingsOutputArray
         )
-        return ageOutputArray[0][0] * SCALE
+
+        return faceEmbeddingsOutputArray[0]
     }
 
 }

@@ -1,7 +1,15 @@
 package github.com.st235.facialprocessing.domain.faces
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.annotation.WorkerThread
+import github.com.st235.facialprocessing.domain.faces.detection.FaceDetector
+import github.com.st235.facialprocessing.domain.faces.extraction.AgeExtractor
+import github.com.st235.facialprocessing.domain.faces.extraction.EmotionExtractor
+import github.com.st235.facialprocessing.domain.faces.extraction.FaceEmbeddingsExtractor
+import github.com.st235.facialprocessing.domain.faces.extraction.FacialAttributesExtractor
+import github.com.st235.facialprocessing.domain.faces.extraction.GenderExtractor
+import github.com.st235.facialprocessing.domain.model.FaceDescriptor
 import github.com.st235.facialprocessing.utils.tflite.InterpreterFactory
 import kotlin.math.roundToInt
 
@@ -26,8 +34,8 @@ class FaceProcessor(
             val faceBitmap = Bitmap.createBitmap(
                 image,
                 rescaledFace.xMin.toInt(), rescaledFace.yMin.toInt(),
-                rescaledFace.width.toInt(), rescaledFace.height.toInt()
-            )
+                rescaledFace.width.toInt(), rescaledFace.height.toInt(),
+            ).copy(Bitmap.Config.ARGB_8888, false)
 
             val age = ageExtractor.predict(faceBitmap)
             val gender = genderExtractor.predict(faceBitmap)
