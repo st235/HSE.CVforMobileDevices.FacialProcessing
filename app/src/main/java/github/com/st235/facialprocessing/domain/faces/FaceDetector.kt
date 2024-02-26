@@ -1,27 +1,23 @@
-package github.com.st235.facialprocessing.domain
+package github.com.st235.facialprocessing.domain.faces
 
-import android.content.Context
 import android.graphics.Bitmap
-import androidx.annotation.RawRes
 import androidx.annotation.WorkerThread
-import github.com.st235.facialprocessing.domain.FaceDetector.Box.Companion.adjustLetterBoxPadding
-import github.com.st235.facialprocessing.domain.FaceDetector.Box.Companion.rescaleToBitmapSize
+import github.com.st235.facialprocessing.R
+import github.com.st235.facialprocessing.domain.faces.FaceDetector.Box.Companion.adjustLetterBoxPadding
+import github.com.st235.facialprocessing.domain.faces.FaceDetector.Box.Companion.clip
 import github.com.st235.facialprocessing.utils.clamp
-import github.com.st235.facialprocessing.utils.createDataByteBuffer
-import github.com.st235.facialprocessing.utils.loadModelFromRawResources
 import github.com.st235.facialprocessing.utils.scaleLetterBox
 import github.com.st235.facialprocessing.utils.sigmoid
-import github.com.st235.facialprocessing.utils.writeToByteBuffer
+import github.com.st235.facialprocessing.utils.tflite.InterpreterFactory
+import github.com.st235.facialprocessing.utils.tflite.createDataByteBuffer
+import github.com.st235.facialprocessing.utils.tflite.writeToByteBuffer
 import org.tensorflow.lite.Interpreter
-import org.tensorflow.lite.gpu.CompatibilityList
-import org.tensorflow.lite.gpu.GpuDelegate
-import org.tensorflow.lite.gpu.GpuDelegateFactory
 import java.nio.ByteBuffer
 import kotlin.math.max
 import kotlin.math.min
 
+@WorkerThread
 class FaceDetector(
-    @RawRes private val rawModelFile: Int,
     interpreterFactory: InterpreterFactory,
     private val inputTensorIndex: Int = DEFAULT_INPUT_TENSOR_INDEX,
 ) {
@@ -138,12 +134,12 @@ class FaceDetector(
                 )
             }
 
-            fun Box.rescaleToBitmapSize(bitmap: Bitmap): Box {
+            fun Box.clip(): Box {
                 return Box(
-                    xMin = xMin * bitmap.width,
-                    yMin = yMin * bitmap.height,
-                    xMax = xMax * bitmap.width,
-                    yMax = yMax * bitmap.height,
+                    xMin = max(xMin, 0f),
+                    yMin = max(yMin, 0f),
+                    xMax = min(xMax, 1f),
+                    yMax = min(yMax, 1f),
                     score = score,
                 )
             }
@@ -184,7 +180,7 @@ class FaceDetector(
     private val outputMap: Map<Int, ByteBuffer>
 
     init {
-        interpreter = interpreterFactory.create(rawModelFile)
+        interpreter = interpreterFactory.create(R.raw.model_face_detection_media_pipe_full_range, )
 
         val inputTensor = interpreter.getInputTensor(inputTensorIndex)
 
@@ -268,7 +264,7 @@ class FaceDetector(
 
         return prunedDetections
             .map { it.adjustLetterBoxPadding(normalisedPaddings) }
-            .map { it.rescaleToBitmapSize(bitmap) }
+            .map { it.clip() }
     }
 
     private fun nonMaximumSuppression(

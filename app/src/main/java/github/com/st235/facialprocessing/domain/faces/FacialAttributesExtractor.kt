@@ -1,16 +1,17 @@
-package github.com.st235.facialprocessing.domain
+package github.com.st235.facialprocessing.domain.faces
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.annotation.FloatRange
+import androidx.annotation.WorkerThread
 import github.com.st235.facialprocessing.R
+import github.com.st235.facialprocessing.utils.tflite.InterpreterFactory
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
-import java.util.Arrays
 
+@WorkerThread
 class FacialAttributesExtractor(
     interpreterFactory: InterpreterFactory,
     @FloatRange(from = 0.0, to = 1.0) private val eyeglassesThreshold: Float = 0.4f,

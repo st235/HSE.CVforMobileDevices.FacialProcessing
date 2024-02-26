@@ -1,8 +1,9 @@
-package github.com.st235.facialprocessing.utils
+package github.com.st235.facialprocessing.utils.tflite
 
 import android.content.Context
 import android.graphics.Bitmap
 import androidx.annotation.RawRes
+import github.com.st235.facialprocessing.utils.asByteArray
 import java.io.IOException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder

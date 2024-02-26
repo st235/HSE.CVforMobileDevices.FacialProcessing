@@ -1,8 +1,8 @@
-package github.com.st235.facialprocessing.domain
+package github.com.st235.facialprocessing.utils.tflite
 
 import android.content.Context
 import androidx.annotation.RawRes
-import github.com.st235.facialprocessing.utils.loadModelFromRawResources
+import androidx.annotation.WorkerThread
 import org.tensorflow.lite.Interpreter
 import org.tensorflow.lite.gpu.CompatibilityList
 import org.tensorflow.lite.gpu.GpuDelegate
@@ -15,6 +15,7 @@ class InterpreterFactory(
         const val DEFAULT_THREADS_NUMBER = 4
     }
 
+    @WorkerThread
     fun create(@RawRes modelRes: Int): Interpreter {
         val options = Interpreter.Options().setNumThreads(DEFAULT_THREADS_NUMBER)
 

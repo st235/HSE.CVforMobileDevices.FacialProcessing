@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import androidx.annotation.WorkerThread
 
-class GalleryScanner(
+class MediaRetriever(
     private val contentResolver: ContentResolver
 ) {
 
@@ -21,7 +21,7 @@ class GalleryScanner(
         )
     }
 
-    data class GalleryObject(
+    data class MediaFile(
         val id: Long,
         val uri: Uri
     )
@@ -31,7 +31,7 @@ class GalleryScanner(
         album: String = "%",
         page: Int? = null,
         limit: Int? = null,
-    ): List<GalleryObject> {
+    ): List<MediaFile> {
         if ((page == null && limit != null) ||
             (page != null && limit == null)) {
             throw IllegalArgumentException("If provided both page and limit should not be null.")
@@ -87,7 +87,7 @@ class GalleryScanner(
             )
         }
 
-        val result = mutableListOf<GalleryObject>()
+        val result = mutableListOf<MediaFile>()
 
         while (cursor?.moveToNext() == true) {
             val idColumnIndex = cursor.getColumnIndex(MediaStore.Images.ImageColumns._ID)
@@ -99,7 +99,7 @@ class GalleryScanner(
                     objectId
                 )
 
-            result.add(GalleryObject(objectId, imageUri))
+            result.add(MediaFile(objectId, imageUri))
         }
 
         cursor?.close()
