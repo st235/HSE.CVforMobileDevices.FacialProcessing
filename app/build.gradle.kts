@@ -1,4 +1,5 @@
 plugins {
+    id("com.google.devtools.ksp")
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
@@ -76,7 +77,7 @@ dependencies {
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
 
     implementation("androidx.room:room-runtime:2.6.1")
-    annotationProcessor("androidx.room:room-compiler:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
 
     // TF Lite 2.15.0 and above requires min api 26.

@@ -223,6 +223,9 @@ class FaceDetector(
         }
 
         val inputs = arrayOf(inputByteBuffer)
+        for (i in 0 until interpreter.outputTensorCount) {
+            outputMap[i]?.rewind()
+        }
 
         interpreter.runForMultipleInputsOutputs(inputs, outputMap)
 
