@@ -1,8 +1,11 @@
 package github.com.st235.facialprocessing.data.db
 
 import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
+@Entity(tableName = "media_file")
 data class MediaFileEntity(
-    @ColumnInfo(name = "media_id") val mediaId: Long,
+    @PrimaryKey(autoGenerate = false) @ColumnInfo(name = "media_id") val mediaId: Long,
     @ColumnInfo(name = "media_url") val mediaUrl: String,
 )

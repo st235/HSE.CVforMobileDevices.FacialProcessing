@@ -5,10 +5,12 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [FaceEntity::class],
+    entities = [FaceEntity::class, MediaFileEntity::class],
     version = 1,
 )
 @TypeConverters(ListOfFloatsTypeConverter::class)
 abstract class FaceScannerDatabase: RoomDatabase() {
     abstract fun getFaceDao(): FaceDAO
+
+    abstract fun getMediaFilesDao(): MediaFilesDAO
 }

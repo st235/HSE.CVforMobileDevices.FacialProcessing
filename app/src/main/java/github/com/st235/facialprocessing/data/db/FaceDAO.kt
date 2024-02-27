@@ -10,10 +10,7 @@ interface FaceDAO {
     @Insert
     fun insert(vararg face: FaceEntity)
 
-    @Query("SELECT * FROM face")
-    fun getAll(): List<FaceEntity>
-
-    @Query("SELECT media_id, media_url FROM face GROUP BY media_id, media_url")
-    fun getProcessedMediaFiles(): List<MediaFileEntity>
+    @Query("SELECT * FROM face INNER JOIN media_file ON face.media_id == media_file.media_id")
+    fun getAll(): List<FaceWithMediaFileEntity>
 
 }

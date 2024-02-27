@@ -3,6 +3,7 @@ package github.com.st235.facialprocessing.domain
 import androidx.annotation.WorkerThread
 import github.com.st235.facialprocessing.data.FacesRepository
 import github.com.st235.facialprocessing.data.db.FaceEntity
+import github.com.st235.facialprocessing.data.db.MediaFileEntity
 import github.com.st235.facialprocessing.domain.model.FaceDescriptor
 import github.com.st235.facialprocessing.domain.model.FaceDescriptor.Gender.Companion.toInt
 import github.com.st235.facialprocessing.domain.model.GalleryEntry
@@ -98,6 +99,10 @@ class GalleryScanner(
                     val descriptors = processedGalleryEntry.descriptors
 
                     facesRepository.insert(
+                        MediaFileEntity(
+                            mediaId = processedGalleryEntry.id,
+                            mediaUrl = processedGalleryEntry.contentUri.toString(),
+                        ),
                         descriptors.map {
                             val region = it.region
                             val attributes = it.attributes
@@ -108,7 +113,6 @@ class GalleryScanner(
                                 width = region.width,
                                 height = region.height,
                                 mediaId = processedGalleryEntry.id,
-                                mediaUrl = processedGalleryEntry.contentUri.toString(),
                                 age = it.age,
                                 gender = it.gender.toInt(),
                                 hasBeard = attributes.contains(FaceDescriptor.Attribute.BEARD),
