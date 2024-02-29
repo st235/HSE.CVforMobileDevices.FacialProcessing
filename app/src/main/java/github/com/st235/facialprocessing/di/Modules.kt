@@ -3,12 +3,17 @@ package github.com.st235.facialprocessing.di
 import androidx.room.Room
 import github.com.st235.facialprocessing.data.FacesRepository
 import github.com.st235.facialprocessing.data.db.FaceScannerDatabase
+import github.com.st235.facialprocessing.data.db.FaceWithMediaFileEntity
+import github.com.st235.facialprocessing.domain.ClusterProcessor
+import github.com.st235.facialprocessing.domain.FaceDistanceMetric
 import github.com.st235.facialprocessing.domain.GalleryScanner
-import github.com.st235.facialprocessing.domain.MediaFilesProcessor
-import github.com.st235.facialprocessing.utils.tflite.InterpreterFactory
-import github.com.st235.facialprocessing.presentation.screens.clustering_feed.ClusteringViewModel
+import github.com.st235.facialprocessing.domain.clustering.Clusterer
+import github.com.st235.facialprocessing.domain.clustering.Distance
+import github.com.st235.facialprocessing.interactors.FeedInteractor
+import github.com.st235.facialprocessing.presentation.screens.feed.FeedViewModel
 import github.com.st235.facialprocessing.utils.LocalUriLoader
 import github.com.st235.facialprocessing.utils.MediaRetriever
+import github.com.st235.facialprocessing.utils.tflite.InterpreterFactory
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -24,15 +29,27 @@ private val dataModule = module {
 
 }
 
-private val viewModelsModule = module {
+private val domainModule = module {
 
-    viewModel { ClusteringViewModel(get()) }
+    single<Distance<FaceWithMediaFileEntity>> { FaceDistanceMetric() }
+
+    single<Clusterer<FaceWithMediaFileEntity>> { Clusterer.create(get(), Clusterer.Algorithm.DBSCAN) }
+
+    single { ClusterProcessor(get(), get()) }
+
+    single { GalleryScanner(get(), get(), get(), get()) }
 
 }
 
-private val domainModule = module {
+private val interactorsModule = module {
 
-    single { GalleryScanner(get(), get(), get(), get()) }
+    single { FeedInteractor(get()) }
+
+}
+
+private val viewModelsModule = module {
+
+    viewModel { FeedViewModel(get()) }
 
 }
 
@@ -48,4 +65,4 @@ private val utilsModule = module {
 
 }
 
-val appModules = dataModule + viewModelsModule + domainModule + utilsModule
+val appModules = dataModule + domainModule + interactorsModule + viewModelsModule + utilsModule

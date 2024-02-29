@@ -6,18 +6,16 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import github.com.st235.facialprocessing.presentation.base.theme.FacialProcessingTheme
+import github.com.st235.facialprocessing.presentation.theme.FacialProcessingTheme
 import github.com.st235.facialprocessing.presentation.screens.Screen
-import github.com.st235.facialprocessing.presentation.screens.clustering_feed.ClusteringFeed
-import github.com.st235.facialprocessing.presentation.screens.clustering_feed.ClusteringViewModel
+import github.com.st235.facialprocessing.presentation.screens.feed.FeedScreen
+import github.com.st235.facialprocessing.presentation.screens.feed.FeedViewModel
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
@@ -51,9 +49,9 @@ fun AppNavHost(
         modifier = modifier
     ) {
         composable(Screen.ClusteringFeed.route) {
-            val viewModel = koinViewModel<ClusteringViewModel>()
+            val viewModel = koinViewModel<FeedViewModel>()
 
-            ClusteringFeed(
+            FeedScreen(
                 viewModel = viewModel,
                 navController = navController,
                 modifier = modifier

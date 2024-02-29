@@ -37,7 +37,7 @@ class FacialAttributesExtractor(
             .add(NormalizeOp(0f, 255f))
             .build()
 
-    private val interpreter: Interpreter = interpreterFactory.create(R.raw.model_mobilenetv3_large_acc087_eyeglasses_mustache_nobeard_smiling)
+    private val interpreter: Interpreter = interpreterFactory.create(R.raw.model_mobilenetv3_large_eyeglasses_mustache_nobeard_smiling_e027_acc095)
 
     fun predict(image: Bitmap): FacialAttributes {
         val tensorInputImage = TensorImage.fromBitmap(image)

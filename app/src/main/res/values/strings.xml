@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">FacialProcessing</string>
+
+    <string name="clustering_feed_screen_title">Facial Processing</string>
+    <string name="clustering_feed_screen_scan_button">Detect Faces</string>
+    <string name="clustering_feed_grid_see_more">See more</string>
+    <string name="clustering_feed_all_photos_section_title">All photos</string>
+    <string name="clustering_feed_all_photos_section_description">Photos from your gallery with at least one face on it.</string>
+    <string name="clustering_feed_clusters_section_title">People</string>
+    <string name="clustering_feed_clusters_section_description">All photos</string>
+    <string name="clustering_feed_attributes_section_title">Attributes</string>
+    <string name="clustering_feed_attributes_section_description">All photos</string>
 </resources>
