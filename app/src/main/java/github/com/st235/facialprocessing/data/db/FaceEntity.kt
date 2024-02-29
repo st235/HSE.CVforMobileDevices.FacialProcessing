@@ -3,6 +3,7 @@ package github.com.st235.facialprocessing.data.db
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -13,7 +14,8 @@ import androidx.room.PrimaryKey
             parentColumns = [ "media_id" ],
             childColumns = [ "media_id" ],
         )
-    ]
+    ],
+    indices = [Index(value = ["media_id"])],
 )
 data class FaceEntity(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Int? = null,
