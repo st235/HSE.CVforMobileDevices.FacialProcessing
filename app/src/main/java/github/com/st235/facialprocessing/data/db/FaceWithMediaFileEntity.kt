@@ -14,6 +14,7 @@ data class FaceWithMediaFileEntity(
     @ColumnInfo(name = "media_url") val mediaUrl: String,
     @ColumnInfo(name = "age") val age: Int,
     @ColumnInfo(name = "gender") val gender: Int,
+    @ColumnInfo(name = "emotion") val emotion: Int,
     @ColumnInfo(name = "has_beard") val hasBeard: Boolean,
     @ColumnInfo(name = "has_glasses") val hasGlasses: Boolean,
     @ColumnInfo(name = "has_mustache") val hasMustache: Boolean,

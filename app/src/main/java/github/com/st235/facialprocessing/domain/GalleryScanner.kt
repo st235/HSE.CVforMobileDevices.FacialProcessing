@@ -5,6 +5,7 @@ import github.com.st235.facialprocessing.data.FacesRepository
 import github.com.st235.facialprocessing.data.db.FaceEntity
 import github.com.st235.facialprocessing.data.db.MediaFileEntity
 import github.com.st235.facialprocessing.domain.model.FaceDescriptor
+import github.com.st235.facialprocessing.domain.model.FaceDescriptor.Emotion.Companion.toInt
 import github.com.st235.facialprocessing.domain.model.FaceDescriptor.Gender.Companion.toInt
 import github.com.st235.facialprocessing.domain.model.GalleryEntry
 import github.com.st235.facialprocessing.domain.model.ProcessedGalleryEntry
@@ -115,6 +116,7 @@ class GalleryScanner(
                                 mediaId = processedGalleryEntry.id,
                                 age = it.age,
                                 gender = it.gender.toInt(),
+                                emotion = it.emotion.toInt(),
                                 hasBeard = attributes.contains(FaceDescriptor.Attribute.BEARD),
                                 hasMustache = attributes.contains(FaceDescriptor.Attribute.MUSTACHE),
                                 hasGlasses = attributes.contains(FaceDescriptor.Attribute.GLASSES),

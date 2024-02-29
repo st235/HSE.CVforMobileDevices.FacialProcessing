@@ -1,6 +1,24 @@
 <resources>
     <string name="app_name">FacialProcessing</string>
 
+    <string name="search_attribute_sex_male">Male</string>
+    <string name="search_attribute_sex_female">Female</string>
+    <string name="search_attribute_age_group_0_25">Age 0-25</string>
+    <string name="search_attribute_age_group_25_45">Age 25-45</string>
+    <string name="search_attribute_age_group_45_70">Age 45-70</string>
+    <string name="search_attribute_age_group_70_plus">Age 70+</string>
+    <string name="search_attribute_mustache">Mustache</string>
+    <string name="search_attribute_eyeglasses">Eyeglasses</string>
+    <string name="search_attribute_beard">Beard</string>
+    <string name="search_attribute_smiling">Smiling</string>
+    <string name="search_attribute_emotion_anger">Anger</string>
+    <string name="search_attribute_emotion_disgust">Disgust</string>
+    <string name="search_attribute_emotion_fear">Fear</string>
+    <string name="search_attribute_emotion_happiness">Hapiness</string>
+    <string name="search_attribute_emotion_neutral">Neutral</string>
+    <string name="search_attribute_emotion_sadness">Sadness</string>
+    <string name="search_attribute_emotion_surprise">Surprise</string>
+
     <string name="clustering_feed_screen_title">Facial Processing</string>
     <string name="clustering_feed_screen_scan_button">Detect Faces</string>
     <string name="clustering_feed_grid_see_more">See more</string>

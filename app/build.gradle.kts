@@ -59,8 +59,6 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2023.08.00"))
     implementation("androidx.exifinterface:exifinterface:1.3.7")
 
-    implementation("io.coil-kt:coil-compose:2.6.0")
-
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -75,6 +73,9 @@ dependencies {
     implementation("io.insert-koin:koin-core:3.5.3")
     implementation("io.insert-koin:koin-android:3.5.3")
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
+
+    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("com.github.st235:flow-layout-compose:1.2.2")
 
     implementation("androidx.room:room-runtime:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
