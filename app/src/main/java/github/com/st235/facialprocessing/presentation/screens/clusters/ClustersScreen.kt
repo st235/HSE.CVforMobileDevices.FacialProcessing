@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import github.com.st235.facialprocessing.R
+import github.com.st235.facialprocessing.presentation.screens.Screen
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,7 +72,7 @@ fun ClustersScreen(
                         .padding(8.dp)
                         .clip(CircleShape)
                         .focusable()
-                        .clickable { }
+                        .clickable { navController.navigate(Screen.Search.creteForCluster(faceCluster.id)) }
                 )
             }
         }

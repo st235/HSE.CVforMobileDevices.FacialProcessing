@@ -29,6 +29,7 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import github.com.st235.facialprocessing.R
+import github.com.st235.facialprocessing.presentation.screens.Screen
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
@@ -76,7 +77,7 @@ fun SearchScreen(
                         .fillMaxWidth()
                         .aspectRatio(1f)
                         .focusable()
-                        .clickable { }
+                        .clickable { navController.navigate(Screen.Details.create(photo.id, personId)) }
                 )
             }
         }
