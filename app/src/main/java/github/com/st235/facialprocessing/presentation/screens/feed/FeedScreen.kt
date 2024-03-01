@@ -9,21 +9,27 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -43,6 +49,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -57,10 +64,12 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import github.com.st235.facialprocessing.R
+import github.com.st235.facialprocessing.interactors.models.FaceCluster
 import github.com.st235.facialprocessing.interactors.models.FaceSearchAttribute
 import github.com.st235.facialprocessing.interactors.models.MediaEntry
 import github.com.st235.facialprocessing.presentation.screens.Screen
 import github.com.st235.facialprocessing.presentation.widgets.GridButton
+import github.com.st235.facialprocessing.presentation.widgets.GridLayout
 import github.com.st235.facialprocessing.presentation.widgets.SearchAttributesLayout
 
 @Composable
@@ -144,11 +153,16 @@ fun FeedScreen(
         } else {
             val processedPhotos = state.imagesWithFaces
             val searchAttributes = state.searchAttributes
+            val faceClusters = state.faceClusters
+
             FeedLayout(
                 processedPhotos = processedPhotos,
                 searchAttributes = searchAttributes,
+                faceClusters = faceClusters,
                 onPhotoClick = { navController.navigate(Screen.Details.create(it.id)) },
-                onSeeMoreClick = { navController.navigate(Screen.Search.create()) },
+                onSeeMorePhotosClick = { navController.navigate(Screen.Search.create()) },
+                onClusterClick = {},
+                onSeeMoreClustersClick = {},
                 onSearchAttributeClick = {
                     navController.navigate(
                         Screen.Search.createForAttribute(
@@ -226,16 +240,28 @@ private fun SpecialMessageView(
 private fun FeedLayout(
     processedPhotos: List<MediaEntry>,
     searchAttributes: Set<FaceSearchAttribute.Type>,
+    faceClusters: List<FaceCluster>,
     onPhotoClick: (MediaEntry) -> Unit,
-    onSeeMoreClick: () -> Unit,
+    onSeeMorePhotosClick: () -> Unit,
+    onClusterClick: (FaceCluster) -> Unit,
+    onSeeMoreClustersClick: () -> Unit,
     onSearchAttributeClick: (FaceSearchAttribute.Type) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+    ) {
         PhotoCard(
             photos = processedPhotos,
             onPhotoClick = onPhotoClick,
-            onSeeMoreClick = onSeeMoreClick,
+            onSeeMorePhotosClick = onSeeMorePhotosClick,
+        )
+        ClustersGroup(
+            faceClusters = faceClusters,
+            onClusterClick = onClusterClick,
+            onSeeMoreClustersClick = onSeeMoreClustersClick,
         )
         SearchAttributesGroup(
             searchAttributes = searchAttributes,
@@ -250,14 +276,14 @@ private fun PhotoCard(
     photos: List<MediaEntry>,
     modifier: Modifier = Modifier,
     onPhotoClick: (MediaEntry) -> Unit = {},
-    onSeeMoreClick: () -> Unit = {},
+    onSeeMorePhotosClick: () -> Unit = {},
 ) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
         ),
         shape = RoundedCornerShape(12.dp),
-        modifier = modifier.padding(12.dp),
+        modifier = modifier.fillMaxWidth().padding(12.dp),
     ) {
         Column {
             FeedHeader(
@@ -267,7 +293,7 @@ private fun PhotoCard(
             ProcessedPhotos(
                 photos = photos,
                 onPhotoClick = onPhotoClick,
-                onSeeMoreClick = onSeeMoreClick,
+                onSeeMorePhotosClick = onSeeMorePhotosClick,
                 modifier = Modifier
                     .padding(horizontal = 12.dp, vertical = 8.dp)
                     .clip(RoundedCornerShape(32.dp))
@@ -281,13 +307,13 @@ private fun ProcessedPhotos(
     photos: List<MediaEntry>,
     modifier: Modifier = Modifier,
     onPhotoClick: (MediaEntry) -> Unit = {},
-    onSeeMoreClick: () -> Unit = {},
+    onSeeMorePhotosClick: () -> Unit = {},
 ) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
+    GridLayout(
+        columns = 3,
         modifier = modifier,
     ) {
-        items(photos) { photo ->
+        for (photo in photos) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(photo.uri)
@@ -302,7 +328,6 @@ private fun ProcessedPhotos(
             )
         }
 
-        item {
             GridButton(
                 iconRes = R.drawable.ic_hallway_24,
                 text = stringResource(R.string.clustering_feed_grid_see_more),
@@ -312,7 +337,49 @@ private fun ProcessedPhotos(
                     .fillMaxWidth()
                     .aspectRatio(1.0f)
                     .focusable()
-                    .clickable { onSeeMoreClick() }
+                    .clickable { onSeeMorePhotosClick() }
+            )
+    }
+}
+
+@Composable
+private fun ClustersGroup(
+    faceClusters: List<FaceCluster>,
+    modifier: Modifier = Modifier,
+    onClusterClick: (FaceCluster) -> Unit = {},
+    onSeeMoreClustersClick: () -> Unit = {},
+) {
+    Column(modifier = modifier) {
+        FeedHeader(textRes = R.string.clustering_feed_clusters_section_title)
+        GridLayout(
+            columns = 4,
+            modifier = modifier,
+        ) {
+            for (faceCluster in faceClusters) {
+                Image(
+                    bitmap = faceCluster.sampleFace.asImageBitmap(),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(1.0f)
+                        .clip(CircleShape)
+                        .focusable()
+                        .clickable { onClusterClick(faceCluster) }
+                )
+            }
+
+            GridButton(
+                iconRes = R.drawable.ic_hallway_24,
+                text = stringResource(R.string.clustering_feed_grid_see_more),
+                textColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1.0f)
+                    .clip(CircleShape)
+                    .focusable()
+                    .clickable { onSeeMoreClustersClick() }
             )
         }
     }

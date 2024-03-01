@@ -44,7 +44,7 @@ private val domainModule = module {
 
 private val interactorsModule = module {
 
-    single { FeedInteractor(get(), get()) }
+    single { FeedInteractor(get(), get(), get()) }
 
     single { DetailsInteractor(get(), get()) }
 

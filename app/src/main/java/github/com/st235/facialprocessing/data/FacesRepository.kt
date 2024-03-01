@@ -58,7 +58,26 @@ class FacesRepository(
         }.toTypedArray())
     }
 
-    fun getClusters(): Map<Int, Int> {
-        return clustersDao.getAll().map { it.faceId to it.clusterId }.toMap()
+    fun fetchRandomFaceForCluster(clusterId: Int): FaceWithMediaFileEntity {
+        return clustersDao.fetchRandomFaceForCluster(clusterId)
+    }
+
+    fun getFaceToClusterLookup(): Map<Int, Int> {
+        return clustersDao.getAll().associate { it.faceId to it.clusterId }
+    }
+
+    fun getClusterToFacesLookup(): Map<Int, List<Int>> {
+        val faceClusters = clustersDao.getAll()
+        val clusterToFacesLookup = mutableMapOf<Int, MutableList<Int>>()
+
+        for (cluster in faceClusters) {
+            if (!clusterToFacesLookup.containsKey(cluster.clusterId)) {
+                clusterToFacesLookup[cluster.clusterId] = mutableListOf()
+            }
+
+            clusterToFacesLookup.getValue(cluster.clusterId).add(cluster.faceId)
+        }
+
+        return clusterToFacesLookup
     }
 }

@@ -33,10 +33,12 @@ class FeedViewModel(
         viewModelScope.launch {
             val processedImages = feedInteractor.getProcessedImages()
             val searchAttributes = feedInteractor.getSearchAttributes()
+            val faceClusters = feedInteractor.getFaceClusters()
 
             _uiState.value = _uiState.value.copy(
                 imagesWithFaces = processedImages.sample(5),
                 searchAttributes = searchAttributes,
+                faceClusters = faceClusters.sample(5),
             )
         }
     }
