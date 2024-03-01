@@ -11,8 +11,10 @@ import github.com.st235.facialprocessing.domain.clustering.Clusterer
 import github.com.st235.facialprocessing.domain.clustering.Distance
 import github.com.st235.facialprocessing.interactors.DetailsInteractor
 import github.com.st235.facialprocessing.interactors.FeedInteractor
+import github.com.st235.facialprocessing.interactors.SearchInteractor
 import github.com.st235.facialprocessing.presentation.screens.details.DetailsViewModel
 import github.com.st235.facialprocessing.presentation.screens.feed.FeedViewModel
+import github.com.st235.facialprocessing.presentation.screens.search.SearchViewModel
 import github.com.st235.facialprocessing.utils.LocalUriLoader
 import github.com.st235.facialprocessing.utils.MediaRetriever
 import github.com.st235.facialprocessing.utils.tflite.InterpreterFactory
@@ -49,6 +51,8 @@ private val interactorsModule = module {
 
     single { DetailsInteractor(get(), get()) }
 
+    single { SearchInteractor(get()) }
+
 }
 
 private val viewModelsModule = module {
@@ -56,6 +60,8 @@ private val viewModelsModule = module {
     viewModel { FeedViewModel(get()) }
 
     viewModel { DetailsViewModel(get()) }
+
+    viewModel { SearchViewModel(get()) }
 
 }
 

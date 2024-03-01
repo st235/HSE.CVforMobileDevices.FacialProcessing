@@ -21,11 +21,35 @@ sealed class Screen(val route: String) {
         }
     }
 
-    data object PersonPhotosFeed: Screen(route = "person/feed/{id}") {
-        const val ID = "id"
+    data object Search: Screen(route = "search/{query}") {
+        const val QUERY = "query"
 
-        fun create(id: String): String {
-            return "person/feed/$ID"
+        fun create(): String {
+            return "search/all"
+        }
+
+        fun createForAttribute(id: Int): String {
+            return "search/a:$id"
+        }
+
+        fun creteForCluster(id: Int): String {
+            return "search/c:$id"
+        }
+
+        fun getAttributes(query: String): List<Int> {
+            return parseSerialisedQuery(query, argument = "a")
+        }
+
+        fun getPersonId(query: String): Int? {
+            return parseSerialisedQuery(query, argument = "c").firstOrNull()
+        }
+
+        private fun parseSerialisedQuery(query: String, argument: String): List<Int> {
+            val parts = query.split(':')
+            if (parts[0] != argument) {
+                return emptyList()
+            }
+            return parts[1].split(",").map { Integer.parseInt(it) }
         }
     }
 }

@@ -20,6 +20,8 @@ import github.com.st235.facialprocessing.presentation.screens.details.DetailsScr
 import github.com.st235.facialprocessing.presentation.screens.details.DetailsViewModel
 import github.com.st235.facialprocessing.presentation.screens.feed.FeedScreen
 import github.com.st235.facialprocessing.presentation.screens.feed.FeedViewModel
+import github.com.st235.facialprocessing.presentation.screens.search.SearchScreen
+import github.com.st235.facialprocessing.presentation.screens.search.SearchViewModel
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
@@ -77,6 +79,25 @@ fun AppNavHost(
             DetailsScreen(
                 mediaId = mediaId,
                 faceId = if (faceId == Screen.Details.FACE_NULL) { null } else {  faceId },
+                viewModel = viewModel,
+                navController = navController,
+                modifier = modifier
+            )
+        }
+
+        composable(
+            route = Screen.Search.route,
+            arguments = listOf(
+                navArgument(Screen.Search.QUERY) { type = NavType.StringType },
+            )
+        ) { backStackEntry ->
+            val query = backStackEntry.arguments?.getString(Screen.Search.QUERY) ?: ""
+
+            val viewModel = koinViewModel<SearchViewModel>()
+
+            SearchScreen(
+                personId = Screen.Search.getPersonId(query),
+                searchAttributeIds = Screen.Search.getAttributes(query),
                 viewModel = viewModel,
                 navController = navController,
                 modifier = modifier

@@ -1,6 +1,5 @@
 package github.com.st235.facialprocessing.presentation.screens.feed
 
-import android.graphics.Bitmap
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
@@ -42,17 +41,10 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import github.com.st235.facialprocessing.R
-import github.com.st235.facialprocessing.domain.model.FaceDescriptor
 import github.com.st235.facialprocessing.interactors.models.MediaEntry
 import github.com.st235.facialprocessing.presentation.screens.Screen
-import github.com.st235.facialprocessing.presentation.widgets.FaceOverlay
 import github.com.st235.facialprocessing.presentation.widgets.GridButton
-import github.com.st235.facialprocessing.presentation.widgets.SearchAttribute
 import github.com.st235.facialprocessing.presentation.widgets.SearchAttributesLayout
-import github.com.st235.facialprocessing.utils.iconRes
-import github.com.st235.facialprocessing.utils.textRes
-import st235.com.github.flowlayout.compose.FlowLayout
-import st235.com.github.flowlayout.compose.FlowLayoutDirection
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -92,12 +84,14 @@ fun FeedScreen(
         Column(modifier = Modifier.padding(paddings)) {
             ProcessedPhotosCard(
                 photos = processedPhotos,
-                onClick = { navController.navigate(Screen.Details.create(it.id)) }
+                onPhotoClick = { navController.navigate(Screen.Details.create(it.id)) },
+                onSeeMoreClick = { navController.navigate(Screen.Search.create()) },
             )
             FeedHeader(textRes = R.string.clustering_feed_attributes_section_title)
             SearchAttributesLayout(
                 searchAttributes = searchAttributes,
-                modifier.padding(8.dp)
+                onSearchAttributeClicked = { navController.navigate(Screen.Search.createForAttribute(it.id)) },
+                modifier = modifier.padding(8.dp)
             )
         }
     }
@@ -107,7 +101,8 @@ fun FeedScreen(
 private fun ProcessedPhotosCard(
     photos: List<MediaEntry>,
     modifier: Modifier = Modifier,
-    onClick: (MediaEntry) -> Unit = {},
+    onPhotoClick: (MediaEntry) -> Unit = {},
+    onSeeMoreClick: () -> Unit = {},
 ) {
     Card(
         colors = CardDefaults.cardColors(
@@ -123,7 +118,8 @@ private fun ProcessedPhotosCard(
             )
             ProcessedPhotos(
                 photos = photos,
-                onClick = onClick,
+                onPhotoClick = onPhotoClick,
+                onSeeMoreClick = onSeeMoreClick,
                 modifier = Modifier
                     .padding(horizontal = 12.dp, vertical = 8.dp)
                     .clip(RoundedCornerShape(32.dp))
@@ -136,7 +132,8 @@ private fun ProcessedPhotosCard(
 private fun ProcessedPhotos(
     photos: List<MediaEntry>,
     modifier: Modifier = Modifier,
-    onClick: (MediaEntry) -> Unit = {},
+    onPhotoClick: (MediaEntry) -> Unit = {},
+    onSeeMoreClick: () -> Unit = {},
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -153,7 +150,7 @@ private fun ProcessedPhotos(
                     .fillMaxWidth()
                     .aspectRatio(1.0f)
                     .focusable()
-                    .clickable { onClick(photo) }
+                    .clickable { onPhotoClick(photo) }
             )
         }
 
@@ -166,6 +163,8 @@ private fun ProcessedPhotos(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1.0f)
+                    .focusable()
+                    .clickable { onSeeMoreClick() }
             )
         }
     }

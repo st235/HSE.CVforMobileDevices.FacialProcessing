@@ -6,24 +6,30 @@ import github.com.st235.facialprocessing.domain.model.FaceDescriptor
 sealed class FaceSearchAttribute(
     val type: Type
 ) {
-    enum class Type {
-        SEX_MALE,
-        SEX_FEMALE,
-        AGE_GROUP_0_25,
-        AGE_GROUP_25_45,
-        AGE_GROUP_45_70,
-        AGE_GROUP_70_AND_OLDER,
-        MUSTACHE,
-        EYEGLASSES,
-        BEARD,
-        SMILING,
-        EMOTION_ANGER,
-        EMOTION_DISGUST,
-        EMOTION_FEAR,
-        EMOTION_HAPPINESS,
-        EMOTION_NEUTRAL,
-        EMOTION_SADNESS,
-        EMOTION_SURPRISE,
+    enum class Type(val id: Int) {
+        SEX_MALE(0),
+        SEX_FEMALE(1),
+        AGE_GROUP_0_25(2),
+        AGE_GROUP_25_45(3),
+        AGE_GROUP_45_70(4),
+        AGE_GROUP_70_AND_OLDER(5),
+        MUSTACHE(6),
+        EYEGLASSES(7),
+        BEARD(8),
+        SMILING(9),
+        EMOTION_ANGER(10),
+        EMOTION_DISGUST(11),
+        EMOTION_FEAR(12),
+        EMOTION_HAPPINESS(13),
+        EMOTION_NEUTRAL(14),
+        EMOTION_SADNESS(15),
+        EMOTION_SURPRISE(16);
+
+        companion object {
+            fun findById(id: Int): Type {
+                return Type.entries.find { it.id == id } ?: throw IllegalArgumentException("Cannot find type associated with $id.")
+            }
+        }
     }
 
     abstract fun isApplicable(faceEntity: FaceWithMediaFileEntity): Boolean
@@ -150,6 +156,10 @@ sealed class FaceSearchAttribute(
             EmotionNeutralSearchAttribute,
             EmotionSadnessSearchAttribute,
         )
+
+        fun findSearchAttributesByTypeId(typeId: Int): FaceSearchAttribute {
+            return findSearchAttributesByType(type = Type.findById(typeId))
+        }
 
         fun findSearchAttributesByType(type: Type): FaceSearchAttribute {
             return SEARCH_ATTRIBUTES.find { it.type == type } ?: throw IllegalArgumentException("Cannot find type $type")
