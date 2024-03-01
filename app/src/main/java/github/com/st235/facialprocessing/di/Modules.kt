@@ -4,7 +4,6 @@ import androidx.room.Room
 import github.com.st235.facialprocessing.data.FacesRepository
 import github.com.st235.facialprocessing.data.db.FaceScannerDatabase
 import github.com.st235.facialprocessing.data.db.FaceWithMediaFileEntity
-import github.com.st235.facialprocessing.domain.ClusterProcessor
 import github.com.st235.facialprocessing.domain.FaceDistanceMetric
 import github.com.st235.facialprocessing.domain.GalleryScanner
 import github.com.st235.facialprocessing.domain.clustering.Clusterer
@@ -39,15 +38,13 @@ private val domainModule = module {
 
     single<Clusterer<FaceWithMediaFileEntity>> { Clusterer.create(get(), Clusterer.Algorithm.DBSCAN) }
 
-    single { ClusterProcessor(get(), get()) }
-
-    single { GalleryScanner(get(), get(), get(), get()) }
+    single { GalleryScanner(get(), get(), get(), get(), get()) }
 
 }
 
 private val interactorsModule = module {
 
-    single { FeedInteractor(get()) }
+    single { FeedInteractor(get(), get()) }
 
     single { DetailsInteractor(get(), get()) }
 

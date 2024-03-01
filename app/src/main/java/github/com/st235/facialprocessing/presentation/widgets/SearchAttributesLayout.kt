@@ -33,7 +33,7 @@ import st235.com.github.flowlayout.compose.FlowLayoutDirection
 fun SearchAttributesLayout(
     searchAttributes: Set<FaceSearchAttribute.Type>,
     modifier: Modifier = Modifier,
-    onSearchAttributeClicked: (FaceSearchAttribute.Type) -> Unit = {},
+    onSearchAttributeClick: (FaceSearchAttribute.Type) -> Unit = {},
 ) {
     FlowLayout(
         direction = FlowLayoutDirection.START,
@@ -43,7 +43,7 @@ fun SearchAttributesLayout(
             SearchAttributeView(
                 iconRes = searchAttribute.iconRes,
                 text = stringResource(searchAttribute.textRes),
-                onClick = { onSearchAttributeClicked(searchAttribute) },
+                onClick = { onSearchAttributeClick(searchAttribute) },
                 modifier = Modifier
                     .padding(vertical = 2.dp, horizontal = 4.dp)
             )

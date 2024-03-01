@@ -1,5 +1,6 @@
 package github.com.st235.facialprocessing.data
 
+import github.com.st235.facialprocessing.data.db.ClusterEntity
 import github.com.st235.facialprocessing.data.db.FaceEntity
 import github.com.st235.facialprocessing.data.db.FaceScannerDatabase
 import github.com.st235.facialprocessing.data.db.FaceWithMediaFileEntity
@@ -11,16 +12,16 @@ class FacesRepository(
 
     private val faceDao = faceScannerDatabase.getFaceDao()
     private val mediaFilesDao = faceScannerDatabase.getMediaFilesDao()
-
-    // Face id to Cluster id.
-    private val clustersLookup = mutableMapOf<Int, Int>()
+    private val clustersDao = faceScannerDatabase.getClustersDao()
 
     fun getProcessedMediaFiles(): List<MediaFileEntity> {
         return mediaFilesDao.getProcessedMediaFiles()
     }
 
-    fun insert(mediaFile: MediaFileEntity,
-               faces: List<FaceEntity>) {
+    fun insert(
+        mediaFile: MediaFileEntity,
+        faces: List<FaceEntity>
+    ) {
         mediaFilesDao.insert(mediaFile)
         if (faces.isNotEmpty()) {
             faceDao.insert(*faces.toTypedArray())
@@ -47,15 +48,17 @@ class FacesRepository(
         return faceDao.getAllFacesByMediaFile(mediaId)
     }
 
-    fun updateCluster(clusters: List<Set<FaceWithMediaFileEntity>>) {
-        var clusterId = 0
-        clustersLookup.clear()
+    fun insertClusters(clusters: Map<Int, Int>) {
+        clustersDao.nuke()
+        clustersDao.insert(*clusters.map {
+            ClusterEntity(
+                faceId = it.key,
+                clusterId = it.value,
+            )
+        }.toTypedArray())
+    }
 
-        for (cluster in clusters) {
-            for (face in cluster) {
-                clustersLookup[face.id] = clusterId
-            }
-            clusterId += 1
-        }
+    fun getClusters(): Map<Int, Int> {
+        return clustersDao.getAll().map { it.faceId to it.clusterId }.toMap()
     }
 }

@@ -3,90 +3,51 @@ package github.com.st235.facialprocessing.domain
 import androidx.annotation.WorkerThread
 import github.com.st235.facialprocessing.data.FacesRepository
 import github.com.st235.facialprocessing.data.db.FaceEntity
+import github.com.st235.facialprocessing.data.db.FaceWithMediaFileEntity
 import github.com.st235.facialprocessing.data.db.MediaFileEntity
+import github.com.st235.facialprocessing.domain.clustering.Clusterer
 import github.com.st235.facialprocessing.domain.model.FaceDescriptor
 import github.com.st235.facialprocessing.domain.model.FaceDescriptor.Emotion.Companion.toInt
 import github.com.st235.facialprocessing.domain.model.FaceDescriptor.Gender.Companion.toInt
 import github.com.st235.facialprocessing.domain.model.GalleryEntry
 import github.com.st235.facialprocessing.domain.model.ProcessedGalleryEntry
+import github.com.st235.facialprocessing.utils.Assertion
 import github.com.st235.facialprocessing.utils.LocalUriLoader
 import github.com.st235.facialprocessing.utils.MediaRetriever
-import github.com.st235.facialprocessing.utils.Observable
 import github.com.st235.facialprocessing.utils.tflite.InterpreterFactory
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
 
 class GalleryScanner(
     private val facesRepository: FacesRepository,
     private val mediaRetriever: MediaRetriever,
     private val localUriLoader: LocalUriLoader,
     private val interpreterFactory: InterpreterFactory,
-): Observable<GalleryScanner.ScanningCallback>() {
+    private val clusterer: Clusterer<FaceWithMediaFileEntity>,
+) {
 
     abstract class ScanningCallback {
         open fun onProcessingStart(unprocessedMediaCount: Int) {}
         abstract fun onProcessingProgress(processedGalleryEntry: ProcessedGalleryEntry, progress: Float)
-        open fun onProcessingFinished() {}
         open fun onProcessingError(galleryEntry: GalleryEntry, progress: Float) {}
-    }
-
-    private val executor = Executors.newSingleThreadExecutor()
-
-    @Volatile
-    private var scanningFuture: Future<*>? = null
-
-    fun start() {
-        synchronized(this) {
-            if (scanningFuture != null) {
-                throw IllegalStateException("Cannot start, scanning has already started.")
-            }
-
-            scanningFuture = executor.submit(ScanningRequest())
-        }
-    }
-
-    fun cancel() {
-        synchronized(this) {
-            if (scanningFuture == null) {
-                throw IllegalStateException("Cannot cancel, scanning is not running.")
-            }
-
-            scanningFuture?.cancel(true)
-            scanningFuture = null
-        }
-    }
-
-    private fun onProcessingStart(unprocessedMediaCount: Int) {
-        notifyCallbacks { it.onProcessingStart(unprocessedMediaCount) }
-    }
-
-    private fun onProcessingProgress(processedGalleryEntry: ProcessedGalleryEntry, progress: Float) {
-        notifyCallbacks { it.onProcessingProgress(processedGalleryEntry, progress) }
-    }
-
-    private fun onProcessingError(galleryEntry: GalleryEntry, progress: Float) {
-        notifyCallbacks { it.onProcessingError(galleryEntry, progress) }
-    }
-
-    private fun onProcessingFinished() {
-        notifyCallbacks { it.onProcessingFinished() }
+        open fun onProcessingFinished() {}
+        open fun onClusteringStarted() {}
+        open fun onClusteringFinished() {}
     }
 
     @WorkerThread
-    private inner class ScanningRequest: Runnable {
+    fun start(callback: ScanningCallback) {
+        Assertion.assertOnWorkerThread()
+        onStart(callback)
+    }
 
-        override fun run() {
-            val mediaFilesProcessor = MediaFilesProcessor.create(localUriLoader, interpreterFactory)
+    @WorkerThread
+    private fun onStart(callback: ScanningCallback) {
+        val mediaFilesProcessor = MediaFilesProcessor.create(localUriLoader, interpreterFactory)
 
-            val unprocessedGalleryEntries = getUnprocessedGalleryEntries()
+        val unprocessedGalleryEntries = getUnprocessedGalleryEntries()
 
-            if (unprocessedGalleryEntries.isEmpty()) {
-                onProcessingFinished()
-                return
-            }
-
+        if (unprocessedGalleryEntries.isNotEmpty()) {
             val unprocessedEntriesSize = unprocessedGalleryEntries.size
-            onProcessingStart(unprocessedEntriesSize)
+            callback.onProcessingStart(unprocessedEntriesSize)
 
             for ((index, galleryEntry) in unprocessedGalleryEntries.withIndex()) {
                 val progress = (index + 1).toFloat() / unprocessedEntriesSize
@@ -94,7 +55,7 @@ class GalleryScanner(
                 val processingResult = mediaFilesProcessor.process(galleryEntry)
 
                 if (processingResult.isFailure) {
-                    onProcessingError(galleryEntry, progress)
+                    callback.onProcessingError(galleryEntry, progress)
                 } else {
                     val processedGalleryEntry = processingResult.getOrThrow()
                     val descriptors = processedGalleryEntry.descriptors
@@ -126,17 +87,35 @@ class GalleryScanner(
                         }
                     )
 
-                    onProcessingProgress(processedGalleryEntry, progress)
+                    callback.onProcessingProgress(processedGalleryEntry, progress)
                 }
             }
         }
 
-        @WorkerThread
-        private fun getUnprocessedGalleryEntries(): List<GalleryEntry> {
-            val alreadyProcessedImages = facesRepository.getProcessedMediaFiles()
-            val processesIdsLookup = alreadyProcessedImages.map { it.mediaId }
-            val images = mediaRetriever.queryImages().map { GalleryEntry(it.id, it.uri) }
-            return images.filter { !processesIdsLookup.contains(it.id) }
+        callback.onProcessingFinished()
+        callback.onClusteringStarted()
+
+        val allFaces = facesRepository.getAllFaces()
+        val clusters = clusterer.cluster(allFaces)
+
+        val clustersLookup = mutableMapOf<Int, Int>()
+
+        for ((clusterId, cluster) in clusters.withIndex()) {
+            for (face in cluster) {
+                clustersLookup[face.id] = clusterId
+            }
         }
+
+        facesRepository.insertClusters(clustersLookup)
+
+        callback.onClusteringFinished()
+    }
+
+    @WorkerThread
+    private fun getUnprocessedGalleryEntries(): List<GalleryEntry> {
+        val alreadyProcessedImages = facesRepository.getProcessedMediaFiles()
+        val processesIdsLookup = alreadyProcessedImages.map { it.mediaId }
+        val images = mediaRetriever.queryImages().map { GalleryEntry(it.id, it.uri) }
+        return images.filter { !processesIdsLookup.contains(it.id) }
     }
 }

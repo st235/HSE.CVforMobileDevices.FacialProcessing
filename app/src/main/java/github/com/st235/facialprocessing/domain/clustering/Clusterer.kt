@@ -3,7 +3,6 @@ package github.com.st235.facialprocessing.domain.clustering
 import github.com.st235.facialprocessing.domain.clustering.dbscan.DbscanClusterer
 
 interface Clusterer<V> {
-
     enum class Algorithm {
         DBSCAN,
     }
@@ -11,6 +10,9 @@ interface Clusterer<V> {
     fun cluster(points: List<V>): List<Set<V>>
 
     companion object {
+
+        const val NO_CLUSTER = -1
+
         fun <T> create(
             metric: Distance<T>,
             algorithm: Algorithm = Algorithm.DBSCAN,
