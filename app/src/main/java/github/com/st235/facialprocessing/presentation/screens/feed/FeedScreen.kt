@@ -240,7 +240,7 @@ private fun FeedLayout(
         SearchAttributesGroup(
             searchAttributes = searchAttributes,
             onSearchAttributeClick = onSearchAttributeClick,
-            modifier = modifier.padding(8.dp),
+            modifier = Modifier.padding(8.dp),
         )
     }
 }
