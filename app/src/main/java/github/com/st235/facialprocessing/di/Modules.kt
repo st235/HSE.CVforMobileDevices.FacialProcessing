@@ -8,9 +8,11 @@ import github.com.st235.facialprocessing.domain.FaceDistanceMetric
 import github.com.st235.facialprocessing.domain.GalleryScanner
 import github.com.st235.facialprocessing.domain.clustering.Clusterer
 import github.com.st235.facialprocessing.domain.clustering.Distance
+import github.com.st235.facialprocessing.interactors.ClustersInteractor
 import github.com.st235.facialprocessing.interactors.DetailsInteractor
 import github.com.st235.facialprocessing.interactors.FeedInteractor
 import github.com.st235.facialprocessing.interactors.SearchInteractor
+import github.com.st235.facialprocessing.presentation.screens.clusters.ClustersViewModel
 import github.com.st235.facialprocessing.presentation.screens.details.DetailsViewModel
 import github.com.st235.facialprocessing.presentation.screens.feed.FeedViewModel
 import github.com.st235.facialprocessing.presentation.screens.search.SearchViewModel
@@ -50,6 +52,8 @@ private val interactorsModule = module {
 
     single { SearchInteractor(get()) }
 
+    single { ClustersInteractor(get(), get()) }
+
 }
 
 private val viewModelsModule = module {
@@ -59,6 +63,8 @@ private val viewModelsModule = module {
     viewModel { DetailsViewModel(get()) }
 
     viewModel { SearchViewModel(get()) }
+
+    viewModel { ClustersViewModel(get()) }
 
 }
 

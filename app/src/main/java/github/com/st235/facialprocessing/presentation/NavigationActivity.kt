@@ -16,6 +16,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import github.com.st235.facialprocessing.presentation.theme.FacialProcessingTheme
 import github.com.st235.facialprocessing.presentation.screens.Screen
+import github.com.st235.facialprocessing.presentation.screens.clusters.ClustersScreen
+import github.com.st235.facialprocessing.presentation.screens.clusters.ClustersViewModel
 import github.com.st235.facialprocessing.presentation.screens.details.DetailsScreen
 import github.com.st235.facialprocessing.presentation.screens.details.DetailsViewModel
 import github.com.st235.facialprocessing.presentation.screens.feed.FeedScreen
@@ -98,6 +100,16 @@ fun AppNavHost(
             SearchScreen(
                 personId = Screen.Search.getPersonId(query),
                 searchAttributeIds = Screen.Search.getAttributes(query),
+                viewModel = viewModel,
+                navController = navController,
+                modifier = modifier
+            )
+        }
+
+        composable(route = Screen.Clusters.route) {
+            val viewModel = koinViewModel<ClustersViewModel>()
+
+            ClustersScreen(
                 viewModel = viewModel,
                 navController = navController,
                 modifier = modifier

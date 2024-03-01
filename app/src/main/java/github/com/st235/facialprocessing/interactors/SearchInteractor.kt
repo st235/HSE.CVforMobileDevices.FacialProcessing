@@ -2,7 +2,7 @@ package github.com.st235.facialprocessing.interactors
 
 import android.net.Uri
 import github.com.st235.facialprocessing.data.FacesRepository
-import github.com.st235.facialprocessing.domain.model.asFaceDescriptor
+import github.com.st235.facialprocessing.data.db.FaceWithMediaFileEntity
 import github.com.st235.facialprocessing.interactors.models.FaceSearchAttribute
 import github.com.st235.facialprocessing.interactors.models.MediaEntry
 import github.com.st235.facialprocessing.interactors.models.asMediaEntry
@@ -34,6 +34,12 @@ class SearchInteractor(
 
     suspend fun findPhotosByCluster(clusterId: Int): List<MediaEntry> = withContext(executionContext) {
         Assertion.assertOnWorkerThread()
-        TODO()
+        val faces = facesRepository.fetchFacesForCluster(clusterId)
+        return@withContext faces.groupBy<FaceWithMediaFileEntity, MediaEntry> {
+            MediaEntry(
+                it.mediaId,
+                Uri.parse(it.mediaUrl)
+            )
+        }.map<MediaEntry, List<FaceWithMediaFileEntity>, MediaEntry> { it.key }
     }
 }

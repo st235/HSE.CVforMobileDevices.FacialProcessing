@@ -4,7 +4,19 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
+import kotlin.math.max
 
+fun Bitmap.rescale(maxWidth: Int,
+                   maxHeight: Int): Bitmap {
+    val scaleFactorX = width.toFloat() / maxWidth
+    val scaleFactorY = height.toFloat() / maxHeight
+
+    val scaleFactor = max(scaleFactorX, scaleFactorY)
+
+    val newWidth = (width / scaleFactor).toInt()
+    val newHeight = (height / scaleFactor).toInt()
+    return Bitmap.createScaledBitmap(this, newWidth, newHeight, false)
+}
 
 fun Bitmap.scaleLetterBox(newWidth: Int,
                           newHeight: Int,

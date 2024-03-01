@@ -72,6 +72,7 @@ class FeedViewModel(
         ) {
             viewModelScope.launch {
                 _uiState.value = _uiState.value.copy(
+                    isPreparingToProcessing = false,
                     isProcessingImages = true,
                     processingProgress = progress
                 )
@@ -85,6 +86,7 @@ class FeedViewModel(
         override fun onProcessingFinished() {
             viewModelScope.launch {
                 _uiState.value = _uiState.value.copy(
+                    isPreparingToProcessing = false,
                     isProcessingImages = false,
                     processingProgress = 1f
                 )
@@ -94,6 +96,8 @@ class FeedViewModel(
         override fun onClusteringStarted() {
             viewModelScope.launch {
                 _uiState.value = _uiState.value.copy(
+                    isPreparingToProcessing = false,
+                    isProcessingImages = false,
                     isClusteringImages = true,
                 )
             }
@@ -102,6 +106,8 @@ class FeedViewModel(
         override fun onClusteringFinished() {
             viewModelScope.launch {
                 _uiState.value = _uiState.value.copy(
+                    isPreparingToProcessing = false,
+                    isProcessingImages = false,
                     isClusteringImages = false,
                 )
                 refreshProcessedData()

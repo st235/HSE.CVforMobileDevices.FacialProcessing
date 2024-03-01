@@ -20,7 +20,7 @@ interface Clusterer<V> {
             return when(algorithm) {
                 Algorithm.DBSCAN -> DbscanClusterer(
                     minimumNumberOfClusterMembers = 5,
-                    maxDistanceBetweenElementsInACluster = 0.5,
+                    maxDistanceBetweenElementsInACluster = 0.78,
                     metric = metric
                 )
             }

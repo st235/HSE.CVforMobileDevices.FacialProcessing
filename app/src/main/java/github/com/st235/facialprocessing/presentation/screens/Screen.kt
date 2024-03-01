@@ -52,4 +52,6 @@ sealed class Screen(val route: String) {
             return parts[1].split(",").map { Integer.parseInt(it) }
         }
     }
+
+    data object Clusters: Screen("clusters")
 }

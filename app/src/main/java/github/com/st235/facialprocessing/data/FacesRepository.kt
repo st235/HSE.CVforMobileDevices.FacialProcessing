@@ -62,6 +62,10 @@ class FacesRepository(
         return clustersDao.fetchRandomFaceForCluster(clusterId)
     }
 
+    fun fetchFacesForCluster(clusterId: Int): List<FaceWithMediaFileEntity> {
+        return clustersDao.fetchFacesForCluster(clusterId)
+    }
+
     fun getFaceToClusterLookup(): Map<Int, Int> {
         return clustersDao.getAll().associate { it.faceId to it.clusterId }
     }

@@ -16,6 +16,7 @@ import androidx.room.PrimaryKey
     ],
 )
 data class ClusterEntity(
-    @PrimaryKey @ColumnInfo("cluster_id") val clusterId: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int? = null,
+    @ColumnInfo("cluster_id") val clusterId: Int,
     @ColumnInfo("face_id") val faceId: Int,
 )

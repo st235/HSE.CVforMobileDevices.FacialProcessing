@@ -16,16 +16,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -61,8 +56,8 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import github.com.st235.facialprocessing.R
 import github.com.st235.facialprocessing.interactors.models.FaceCluster
 import github.com.st235.facialprocessing.interactors.models.FaceSearchAttribute
@@ -169,8 +164,8 @@ fun FeedScreen(
                 faceClusters = faceClusters,
                 onPhotoClick = { navController.navigate(Screen.Details.create(it.id)) },
                 onSeeMorePhotosClick = { navController.navigate(Screen.Search.create()) },
-                onClusterClick = {},
-                onSeeMoreClustersClick = {},
+                onClusterClick = { navController.navigate(Screen.Search.creteForCluster(it.id)) },
+                onSeeMoreClustersClick = { navController.navigate(Screen.Clusters.route) },
                 onSearchAttributeClick = {
                     navController.navigate(
                         Screen.Search.createForAttribute(
@@ -276,6 +271,7 @@ private fun FeedLayout(
             onSearchAttributeClick = onSearchAttributeClick,
             modifier = Modifier.padding(8.dp),
         )
+        Spacer(modifier = Modifier.height(72.dp))
     }
 }
 
@@ -291,7 +287,9 @@ private fun PhotoCard(
             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
         ),
         shape = RoundedCornerShape(12.dp),
-        modifier = modifier.fillMaxWidth().padding(12.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(12.dp),
     ) {
         Column {
             FeedHeader(
@@ -311,6 +309,7 @@ private fun PhotoCard(
 }
 
 @Composable
+@OptIn(ExperimentalGlideComposeApi::class)
 private fun ProcessedPhotos(
     photos: List<MediaEntry>,
     modifier: Modifier = Modifier,
@@ -322,10 +321,8 @@ private fun ProcessedPhotos(
         modifier = modifier,
     ) {
         for (photo in photos) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(photo.uri)
-                    .build(),
+            GlideImage(
+                model = photo.uri,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -336,17 +333,17 @@ private fun ProcessedPhotos(
             )
         }
 
-            GridButton(
-                iconRes = R.drawable.ic_hallway_24,
-                text = stringResource(R.string.clustering_feed_grid_see_more),
-                textColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1.0f)
-                    .focusable()
-                    .clickable { onSeeMorePhotosClick() }
-            )
+        GridButton(
+            iconRes = R.drawable.ic_hallway_24,
+            text = stringResource(R.string.clustering_feed_grid_see_more),
+            textColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1.0f)
+                .focusable()
+                .clickable { onSeeMorePhotosClick() }
+        )
     }
 }
 
@@ -371,6 +368,7 @@ private fun ClustersGroup(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(1.0f)
+                        .padding(8.dp)
                         .clip(CircleShape)
                         .focusable()
                         .clickable { onClusterClick(faceCluster) }
@@ -378,13 +376,14 @@ private fun ClustersGroup(
             }
 
             GridButton(
-                iconRes = R.drawable.ic_hallway_24,
+                iconRes = R.drawable.ic_face_24,
                 text = stringResource(R.string.clustering_feed_grid_see_more),
                 textColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 backgroundColor = MaterialTheme.colorScheme.primaryContainer,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1.0f)
+                    .padding(8.dp)
                     .clip(CircleShape)
                     .focusable()
                     .clickable { onSeeMoreClustersClick() }

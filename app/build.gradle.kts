@@ -74,7 +74,8 @@ dependencies {
     implementation("io.insert-koin:koin-android:3.5.3")
     implementation("io.insert-koin:koin-androidx-compose:3.5.3")
 
-    implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation("com.github.bumptech.glide:glide:4.14.2")
+    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
     implementation("com.github.st235:flow-layout-compose:1.2.2")
 
     implementation("androidx.room:room-runtime:2.6.1")
