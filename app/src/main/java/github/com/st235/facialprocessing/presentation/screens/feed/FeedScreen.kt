@@ -93,6 +93,7 @@ fun FeedScreen(
         viewModel.refreshProcessedData()
     }
 
+    val isPreparingToProcessing = state.isPreparingToProcessing
     val isProcessing = state.isProcessingImages
     val isClustering = state.isClusteringImages
 
@@ -108,7 +109,7 @@ fun FeedScreen(
             )
         },
         floatingActionButton = {
-            val canShowScanButton = !isProcessing && !isClustering
+            val canShowScanButton = !isPreparingToProcessing && !isProcessing && !isClustering
 
             if (canShowScanButton) {
                 ExtendedFloatingActionButton(
@@ -134,7 +135,14 @@ fun FeedScreen(
             }
         }
     ) { paddings ->
-        if (isProcessing) {
+        if (isPreparingToProcessing) {
+            SpecialMessageView(
+                icon = R.drawable.ic_hourglass_top_24,
+                headline = stringResource(R.string.clustering_feed_screen_preparing_to_processing_title),
+                description = stringResource(R.string.clustering_feed_screen_preparing_to_processing_description),
+                progress = -1f
+            )
+        } else if (isProcessing) {
             val progress = state.processingProgress
 
             SpecialMessageView(

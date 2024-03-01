@@ -46,6 +46,10 @@ class FeedViewModel(
     fun startScanning() {
         scanningJob?.cancel()
         scanningJob = viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                isPreparingToProcessing = true
+            )
+
             feedInteractor.startScanning(ScanningCallback())
         }
     }
@@ -55,6 +59,7 @@ class FeedViewModel(
         override fun onProcessingStart(unprocessedMediaCount: Int) {
             viewModelScope.launch {
                 _uiState.value = _uiState.value.copy(
+                    isPreparingToProcessing = false,
                     isProcessingImages = true,
                     processingProgress = 0f
                 )

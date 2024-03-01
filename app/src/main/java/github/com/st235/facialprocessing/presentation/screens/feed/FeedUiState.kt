@@ -5,6 +5,7 @@ import github.com.st235.facialprocessing.interactors.models.FaceSearchAttribute
 import github.com.st235.facialprocessing.interactors.models.MediaEntry
 
 data class FeedUiState(
+    val isPreparingToProcessing: Boolean,
     val isProcessingImages: Boolean,
     val processingProgress: Float,
     val isClusteringImages: Boolean,
@@ -14,6 +15,7 @@ data class FeedUiState(
 ) {
     companion object {
         val EMPTY = FeedUiState(
+            isPreparingToProcessing = false,
             isProcessingImages = false,
             processingProgress = 0f,
             isClusteringImages = false,

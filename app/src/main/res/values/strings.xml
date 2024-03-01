@@ -29,6 +29,8 @@
     <string name="clustering_feed_attributes_section_title">Attributes</string>
     <string name="clustering_feed_attributes_section_description">All photos</string>
 
+    <string name="clustering_feed_screen_preparing_to_processing_title">Preparing images to process</string>
+    <string name="clustering_feed_screen_preparing_to_processing_description">Reading images from the gallery.</string>
     <string name="clustering_feed_screen_image_processing_title">Processing images</string>
     <string name="clustering_feed_screen_image_processing_description">Reading images from the gallery.</string>
     <string name="clustering_feed_screen_clustering_title">Extracting clusters</string>
