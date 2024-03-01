@@ -2,8 +2,11 @@ package github.com.st235.facialprocessing.presentation.screens.search
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -20,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -59,6 +63,9 @@ fun SearchScreen(
 
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Fixed(2),
+            verticalItemSpacing = 4.dp,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = modifier.fillMaxSize(),
         ) {
             items(photos) { photo ->
                 AsyncImage(
@@ -66,9 +73,10 @@ fun SearchScreen(
                         .data(photo.uri)
                         .build(),
                     contentDescription = null,
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.FillWidth,
                     modifier = Modifier
                         .fillMaxWidth()
+                        .wrapContentHeight()
                         .focusable()
                         .clickable { }
                 )
