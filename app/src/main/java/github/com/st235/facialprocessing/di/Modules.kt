@@ -9,7 +9,9 @@ import github.com.st235.facialprocessing.domain.FaceDistanceMetric
 import github.com.st235.facialprocessing.domain.GalleryScanner
 import github.com.st235.facialprocessing.domain.clustering.Clusterer
 import github.com.st235.facialprocessing.domain.clustering.Distance
+import github.com.st235.facialprocessing.interactors.DetailsInteractor
 import github.com.st235.facialprocessing.interactors.FeedInteractor
+import github.com.st235.facialprocessing.presentation.screens.details.DetailsViewModel
 import github.com.st235.facialprocessing.presentation.screens.feed.FeedViewModel
 import github.com.st235.facialprocessing.utils.LocalUriLoader
 import github.com.st235.facialprocessing.utils.MediaRetriever
@@ -45,11 +47,15 @@ private val interactorsModule = module {
 
     single { FeedInteractor(get()) }
 
+    single { DetailsInteractor(get(), get()) }
+
 }
 
 private val viewModelsModule = module {
 
     viewModel { FeedViewModel(get()) }
+
+    viewModel { DetailsViewModel(get()) }
 
 }
 

@@ -3,9 +3,9 @@
 
     <string name="search_attribute_sex_male">Male</string>
     <string name="search_attribute_sex_female">Female</string>
-    <string name="search_attribute_age_group_0_25">Age 0-25</string>
-    <string name="search_attribute_age_group_25_45">Age 25-45</string>
-    <string name="search_attribute_age_group_45_70">Age 45-70</string>
+    <string name="search_attribute_age_group_0_25">Age 0–25</string>
+    <string name="search_attribute_age_group_25_45">Age 25–45</string>
+    <string name="search_attribute_age_group_45_70">Age 45–70</string>
     <string name="search_attribute_age_group_70_plus">Age 70+</string>
     <string name="search_attribute_mustache">Mustache</string>
     <string name="search_attribute_eyeglasses">Eyeglasses</string>
@@ -28,4 +28,6 @@
     <string name="clustering_feed_clusters_section_description">All photos</string>
     <string name="clustering_feed_attributes_section_title">Attributes</string>
     <string name="clustering_feed_attributes_section_description">All photos</string>
+
+    <string name="details_screen_title">Preview</string>
 </resources>

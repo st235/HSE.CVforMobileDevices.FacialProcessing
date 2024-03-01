@@ -4,6 +4,7 @@ import github.com.st235.facialprocessing.data.FacesRepository
 import github.com.st235.facialprocessing.interactors.models.FaceSearchAttribute
 import github.com.st235.facialprocessing.interactors.models.MediaEntry
 import github.com.st235.facialprocessing.interactors.models.asMediaEntry
+import github.com.st235.facialprocessing.interactors.models.asSearchAttributes
 import github.com.st235.facialprocessing.utils.Assertion
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,21 +22,7 @@ class FeedInteractor(
 
     suspend fun getSearchAttributes(): Set<FaceSearchAttribute.Type> = withContext(executionContext) {
         val faces = facesRepository.getAllFaces()
-
-        val searchAttributes = mutableSetOf<FaceSearchAttribute.Type>()
-        for (face in faces) {
-            for (searchAttribute in FaceSearchAttribute.SEARCH_ATTRIBUTES) {
-                if (searchAttribute.isApplicable(face)) {
-                    searchAttributes.add(searchAttribute.type)
-                }
-
-                if (searchAttributes.size == FaceSearchAttribute.SEARCH_ATTRIBUTES.size) {
-                    break
-                }
-            }
-        }
-
-        return@withContext searchAttributes
+        return@withContext faces.asSearchAttributes()
     }
 
 }

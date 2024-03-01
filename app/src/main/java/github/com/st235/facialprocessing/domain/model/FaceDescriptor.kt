@@ -1,5 +1,7 @@
 package github.com.st235.facialprocessing.domain.model
 
+import github.com.st235.facialprocessing.data.db.FaceWithMediaFileEntity
+
 data class FaceDescriptor(
     val region: Region,
     val age: Int,
@@ -83,4 +85,30 @@ data class FaceDescriptor(
         BEARD,
         SMILE,
     }
+}
+
+fun FaceWithMediaFileEntity.asFaceDescriptor(): FaceDescriptor {
+    val attributes = mutableSetOf<FaceDescriptor.Attribute>()
+
+    if (hasMustache) {
+        attributes.add(FaceDescriptor.Attribute.MUSTACHE)
+    }
+    if (hasBeard) {
+        attributes.add(FaceDescriptor.Attribute.BEARD)
+    }
+    if (hasGlasses) {
+        attributes.add(FaceDescriptor.Attribute.GLASSES)
+    }
+    if (isSmiling) {
+        attributes.add(FaceDescriptor.Attribute.SMILE)
+    }
+
+    return FaceDescriptor(
+        region = FaceDescriptor.Region(left, top, width, height),
+        age = age,
+        gender = FaceDescriptor.Gender.fromInt(gender),
+        emotion = FaceDescriptor.Emotion.fromInt(emotion),
+        attributes = attributes,
+        embeddings = embeddings,
+    )
 }

@@ -9,11 +9,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import github.com.st235.facialprocessing.presentation.theme.FacialProcessingTheme
 import github.com.st235.facialprocessing.presentation.screens.Screen
+import github.com.st235.facialprocessing.presentation.screens.details.DetailsScreen
+import github.com.st235.facialprocessing.presentation.screens.details.DetailsViewModel
 import github.com.st235.facialprocessing.presentation.screens.feed.FeedScreen
 import github.com.st235.facialprocessing.presentation.screens.feed.FeedViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -28,7 +32,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     AppNavHost(
-                        startDestination = Screen.ClusteringFeed.route,
+                        startDestination = Screen.Feed.route,
                         navController = rememberNavController()
                     )
                 }
@@ -48,10 +52,31 @@ fun AppNavHost(
         navController = navController,
         modifier = modifier
     ) {
-        composable(Screen.ClusteringFeed.route) {
+        composable(Screen.Feed.route) {
             val viewModel = koinViewModel<FeedViewModel>()
 
             FeedScreen(
+                viewModel = viewModel,
+                navController = navController,
+                modifier = modifier
+            )
+        }
+
+        composable(
+            route = Screen.Details.route,
+            arguments = listOf(
+                navArgument(Screen.Details.MEDIA_ID) { type = NavType.IntType },
+                navArgument(Screen.Details.FACE_ID) { type = NavType.IntType },
+            )
+        ) { backStackEntry ->
+            val mediaId = backStackEntry.arguments?.getInt(Screen.Details.MEDIA_ID) ?: -1
+            val faceId = backStackEntry.arguments?.getInt(Screen.Details.FACE_ID) ?: -1
+
+            val viewModel = koinViewModel<DetailsViewModel>()
+
+            DetailsScreen(
+                mediaId = mediaId,
+                faceId = if (faceId == Screen.Details.FACE_NULL) { null } else {  faceId },
                 viewModel = viewModel,
                 navController = navController,
                 modifier = modifier

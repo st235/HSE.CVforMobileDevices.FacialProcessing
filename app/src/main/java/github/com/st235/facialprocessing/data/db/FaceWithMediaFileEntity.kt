@@ -11,7 +11,7 @@ data class FaceWithMediaFileEntity(
     @ColumnInfo(name = "region_width") val width: Float,
     @ColumnInfo(name = "region_height") val height: Float,
     @ColumnInfo(name = "media_id") val mediaId: Long,
-    @ColumnInfo(name = "media_url") val mediaUrl: String,
+    @ColumnInfo(name = "media_uri") val mediaUrl: String,
     @ColumnInfo(name = "age") val age: Int,
     @ColumnInfo(name = "gender") val gender: Int,
     @ColumnInfo(name = "emotion") val emotion: Int,

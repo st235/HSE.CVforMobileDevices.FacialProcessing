@@ -102,7 +102,7 @@ class GalleryScanner(
                     facesRepository.insert(
                         MediaFileEntity(
                             mediaId = processedGalleryEntry.id,
-                            mediaUrl = processedGalleryEntry.contentUri.toString(),
+                            mediaUri = processedGalleryEntry.contentUri.toString(),
                         ),
                         descriptors.map {
                             val region = it.region

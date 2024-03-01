@@ -31,12 +31,20 @@ class FacesRepository(
         return faceDao.getById(faceId)
     }
 
+    fun getMediaFileById(mediaId: Int): MediaFileEntity {
+        return mediaFilesDao.getById(mediaId)
+    }
+
     fun getAllFaces(): List<FaceWithMediaFileEntity> {
         return faceDao.getAll()
     }
 
     fun getMediaFilesWithFaces(): List<MediaFileEntity> {
         return faceDao.getMediaFilesWithFaces()
+    }
+
+    fun getAllFacesAtMediaFile(mediaId: Int): List<FaceWithMediaFileEntity> {
+        return faceDao.getAllFacesByMediaFile(mediaId)
     }
 
     fun updateCluster(clusters: List<Set<FaceWithMediaFileEntity>>) {

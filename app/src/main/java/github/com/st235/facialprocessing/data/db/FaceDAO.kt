@@ -16,7 +16,10 @@ interface FaceDAO {
     @Query("SELECT * FROM face INNER JOIN media_file ON face.media_id == media_file.media_id")
     fun getAll(): List<FaceWithMediaFileEntity>
 
-    @Query("SELECT media_file.media_id, media_file.media_url FROM face INNER JOIN media_file ON face.media_id == media_file.media_id GROUP BY media_file.media_id, media_file.media_url")
+    @Query("SELECT media_file.media_id, media_file.media_uri FROM face INNER JOIN media_file ON face.media_id == media_file.media_id GROUP BY media_file.media_id, media_file.media_uri")
     fun getMediaFilesWithFaces(): List<MediaFileEntity>
+
+    @Query("SELECT * FROM face INNER JOIN media_file ON face.media_id == media_file.media_id WHERE media_file.media_id = :mediaId")
+    fun getAllFacesByMediaFile(mediaId: Int): List<FaceWithMediaFileEntity>
 
 }

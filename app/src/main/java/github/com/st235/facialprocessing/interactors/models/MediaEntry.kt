@@ -11,6 +11,6 @@ data class MediaEntry(
 fun MediaFileEntity.asMediaEntry(): MediaEntry {
     return MediaEntry(
         id = this.mediaId,
-        uri = Uri.parse(this.mediaUrl),
+        uri = Uri.parse(this.mediaUri),
     )
 }

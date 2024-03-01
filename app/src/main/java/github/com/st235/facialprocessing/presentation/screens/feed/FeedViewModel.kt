@@ -3,6 +3,7 @@ package github.com.st235.facialprocessing.presentation.screens.feed
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import github.com.st235.facialprocessing.interactors.FeedInteractor
+import github.com.st235.facialprocessing.utils.sample
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -23,7 +24,7 @@ class FeedViewModel(
             val searchAttributes = feedInteractor.getSearchAttributes()
 
             _uiState.value = _uiState.value.copy(
-                imagesWithFaces = processedImages,
+                imagesWithFaces = processedImages.sample(5),
                 searchAttributes = searchAttributes,
             )
         }
