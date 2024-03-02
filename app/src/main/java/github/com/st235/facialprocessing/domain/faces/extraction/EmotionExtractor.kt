@@ -32,7 +32,7 @@ class EmotionExtractor(
     private val inputImageProcessor =
         ImageProcessor.Builder()
             .add(ResizeOp(INPUT_IMAGE_SIZE, INPUT_IMAGE_SIZE, ResizeOp.ResizeMethod.BILINEAR))
-            .add(NormalizeOp(0f, 255f))
+            .add(NormalizeOp(floatArrayOf(103.939f, 116.779f, 123.68f), floatArrayOf(1f, 1f, 1f)))
             .build()
 
     private val interpreter: Interpreter = interpreterFactory.create(R.raw.emotions_mobilenet_7)
