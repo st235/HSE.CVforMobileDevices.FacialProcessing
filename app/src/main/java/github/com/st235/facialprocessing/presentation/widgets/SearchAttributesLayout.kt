@@ -56,8 +56,8 @@ fun SearchAttributeView(
     @DrawableRes iconRes: Int,
     text: String,
     modifier: Modifier = Modifier,
-    backgroundColor: Color = MaterialTheme.colorScheme.primaryContainer,
-    contentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     onClick: () -> Unit = {},
 ) {
     val cornerRadiusPx = with(LocalDensity.current) { 16.dp.toPx() }

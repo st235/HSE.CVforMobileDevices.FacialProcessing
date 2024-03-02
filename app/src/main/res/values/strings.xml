@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FacialProcessing</string>
+    <string name="app_name">Faces Gallery</string>
 
     <string name="search_attribute_sex_male">Male</string>
     <string name="search_attribute_sex_female">Female</string>
@@ -14,20 +14,20 @@
     <string name="search_attribute_emotion_anger">Anger</string>
     <string name="search_attribute_emotion_disgust">Disgust</string>
     <string name="search_attribute_emotion_fear">Fear</string>
-    <string name="search_attribute_emotion_happiness">Hapiness</string>
+    <string name="search_attribute_emotion_happiness">Happiness</string>
     <string name="search_attribute_emotion_neutral">Neutral</string>
     <string name="search_attribute_emotion_sadness">Sadness</string>
     <string name="search_attribute_emotion_surprise">Surprise</string>
 
-    <string name="clustering_feed_screen_title">Facial Processing</string>
+    <string name="clustering_feed_screen_title">Faces Gallery</string>
     <string name="clustering_feed_screen_scan_button">Detect Faces</string>
-    <string name="clustering_feed_grid_see_more">See more</string>
+    <string name="clustering_feed_grid_see_more">More</string>
     <string name="clustering_feed_all_photos_section_title">All photos</string>
-    <string name="clustering_feed_all_photos_section_description">Photos from your gallery with at least one face on it.</string>
+    <string name="clustering_feed_all_photos_section_description">Photos from the gallery with one or more faces on it.</string>
     <string name="clustering_feed_clusters_section_title">People</string>
-    <string name="clustering_feed_clusters_section_description">All photos</string>
-    <string name="clustering_feed_attributes_section_title">Attributes</string>
-    <string name="clustering_feed_attributes_section_description">All photos</string>
+    <string name="clustering_feed_clusters_section_description">We have tried to analyse the images in the gallery and group photos by people on them.</string>
+    <string name="clustering_feed_attributes_section_title">Tags</string>
+    <string name="clustering_feed_attributes_section_description">These are the tags that we have extracted from the images.</string>
     <string name="clustering_feed_loading_title">Loading…</string>
     <string name="clustering_feed_loading_description">Thank you for your patience while we are fetching your data from the cache.</string>
 

@@ -8,7 +8,6 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,6 +44,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -100,7 +100,8 @@ fun FeedScreen(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text(stringResource(R.string.clustering_feed_screen_title), fontWeight = FontWeight.Medium) }
+                title = { Text(stringResource(R.string.clustering_feed_screen_title), fontWeight = FontWeight.Medium) },
+                modifier = Modifier.shadow(elevation = 8.dp)
             )
         },
         floatingActionButton = {
@@ -307,11 +308,14 @@ private fun FeedLayout(
             faceClusters = faceClusters,
             onClusterClick = onClusterClick,
             onSeeMoreClustersClick = onSeeMoreClustersClick,
+            modifier = Modifier
+                .padding(vertical = 8.dp, horizontal = 16.dp)
         )
         SearchAttributesGroup(
             searchAttributes = searchAttributes,
             onSearchAttributeClick = onSearchAttributeClick,
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier
+                .padding(vertical = 8.dp, horizontal = 16.dp)
         )
         Spacer(modifier = Modifier.height(72.dp))
     }
@@ -326,25 +330,26 @@ private fun PhotoCard(
 ) {
     Card(
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
         ),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(18.dp),
         modifier = modifier
             .fillMaxWidth()
-            .padding(12.dp),
+            .padding(16.dp),
     ) {
         Column {
             FeedHeader(
-                textRes = R.string.clustering_feed_all_photos_section_title,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                text = stringResource(R.string.clustering_feed_all_photos_section_title),
+                description = stringResource(R.string.clustering_feed_all_photos_section_description),
+                textColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 16.dp, bottom = 6.dp, start = 16.dp, end = 16.dp)
             )
             ProcessedPhotos(
                 photos = photos,
                 onPhotoClick = onPhotoClick,
                 onSeeMorePhotosClick = onSeeMorePhotosClick,
                 modifier = Modifier
-                    .padding(horizontal = 12.dp, vertical = 8.dp)
-                    .clip(RoundedCornerShape(32.dp))
+                    .padding(horizontal = 8.dp)
             )
         }
     }
@@ -370,6 +375,8 @@ private fun ProcessedPhotos(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1.0f)
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(32.dp))
                     .focusable()
                     .clickable { onPhotoClick(photo) }
             )
@@ -378,11 +385,13 @@ private fun ProcessedPhotos(
         GridButton(
             iconRes = R.drawable.ic_hallway_24,
             text = stringResource(R.string.clustering_feed_grid_see_more),
-            textColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+            color = MaterialTheme.colorScheme.onSurface,
+            backgroundColor = MaterialTheme.colorScheme.surface,
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1.0f)
+                .padding(8.dp)
+                .clip(RoundedCornerShape(32.dp))
                 .focusable()
                 .clickable { onSeeMorePhotosClick() }
         )
@@ -397,10 +406,14 @@ private fun ClustersGroup(
     onSeeMoreClustersClick: () -> Unit = {},
 ) {
     Column(modifier = modifier) {
-        FeedHeader(textRes = R.string.clustering_feed_clusters_section_title)
+        FeedHeader(
+            text = stringResource(R.string.clustering_feed_clusters_section_title),
+            description = stringResource(R.string.clustering_feed_screen_clustering_description),
+        )
         GridLayout(
             columns = 4,
-            modifier = modifier,
+            modifier = modifier
+                .fillMaxWidth(),
         ) {
             for (faceCluster in faceClusters) {
                 Image(
@@ -420,8 +433,10 @@ private fun ClustersGroup(
             GridButton(
                 iconRes = R.drawable.ic_face_24,
                 text = stringResource(R.string.clustering_feed_grid_see_more),
-                textColor = MaterialTheme.colorScheme.onPrimaryContainer,
-                backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                backgroundColor = MaterialTheme.colorScheme.surfaceVariant,
+                fontSize = 12.sp,
+                iconSpacing = 2.dp,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1.0f)
@@ -441,7 +456,11 @@ private fun SearchAttributesGroup(
     onSearchAttributeClick: (FaceSearchAttribute.Type) -> Unit,
 ) {
     Column(modifier = modifier) {
-        FeedHeader(textRes = R.string.clustering_feed_attributes_section_title)
+        FeedHeader(
+            text = stringResource(R.string.clustering_feed_attributes_section_title),
+            description = stringResource(R.string.clustering_feed_attributes_section_description),
+        )
+        Spacer(modifier = Modifier.height(12.dp))
         SearchAttributesLayout(
             searchAttributes = searchAttributes,
             onSearchAttributeClick = onSearchAttributeClick,
@@ -451,24 +470,24 @@ private fun SearchAttributesGroup(
 
 @Composable
 private fun FeedHeader(
-    @StringRes textRes: Int,
+    text: String,
+    description: String,
     modifier: Modifier = Modifier,
     textColor: Color = MaterialTheme.colorScheme.onBackground,
-    descriptionColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
 ) {
     Column(modifier = modifier) {
         Text(
-            stringResource(textRes),
+            text,
             fontWeight = FontWeight.Bold,
             fontSize = 28.sp,
             color = textColor,
         )
-        Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         Text(
-            stringResource(textRes),
+            description,
             fontWeight = FontWeight.Normal,
             fontSize = 16.sp,
-            color = descriptionColor,
+            color = textColor,
         )
     }
 }
