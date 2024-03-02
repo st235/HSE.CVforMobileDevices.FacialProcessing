@@ -1,4 +1,4 @@
-package org.example.hdbscan
+package github.com.st235.facialprocessing.domain.clustering.hdbscan
 
 import github.com.st235.facialprocessing.domain.clustering.Distance
 import java.util.*

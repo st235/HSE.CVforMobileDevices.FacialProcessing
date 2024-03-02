@@ -1,4 +1,4 @@
-package org.example.hdbscan
+package github.com.st235.facialprocessing.domain.clustering.hdbscan
 
 import github.com.st235.facialprocessing.domain.clustering.Clusterer
 import github.com.st235.facialprocessing.domain.clustering.Distance
@@ -7,7 +7,8 @@ class HdbscanClusterer<T>(
     private val distanceMetric: Distance<T>,
     private val filterProbability: Float = 0f,
     private val minClusterSize: Int = 5,
-    private val coreDistanceKnnRadius: Int = 5
+    private val coreDistanceKnnRadius: Int = 5,
+    private val constraints: List<Constraint> = emptyList(),
 ): Clusterer<T> {
 
     override fun cluster(points: List<T>): List<Set<T>> {
@@ -22,12 +23,17 @@ class HdbscanClusterer<T>(
             numPoints,
             mst,
             minClusterSize = minClusterSize,
-            emptyList()
+            constraints
         )
         HdbscanUtils.propagateTree(hierarchyAndClusterTree.clusters)
 
-        val prominentClusters = HdbscanUtils.findProminentClusters(hierarchyAndClusterTree.clusters, hierarchyAndClusterTree.hierarchy, numPoints)
-        val membershipProbabilities = HdbscanUtils.findMembershipScore(prominentClusters, coreDistances)
+        val prominentClusters = HdbscanUtils.findProminentClusters(
+            hierarchyAndClusterTree.clusters,
+            hierarchyAndClusterTree.hierarchy,
+            numPoints
+        )
+        val membershipProbabilities =
+            HdbscanUtils.findMembershipScore(prominentClusters, coreDistances)
 
         val result = mutableMapOf<Int, MutableSet<T>>()
 

@@ -1,4 +1,4 @@
-package org.example.hdbscan
+package github.com.st235.facialprocessing.domain.clustering.hdbscan
 
 data class Constraint(
     val pointA: Int,

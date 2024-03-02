@@ -1,7 +1,7 @@
 package github.com.st235.facialprocessing.domain.clustering
 
 import github.com.st235.facialprocessing.domain.clustering.dbscan.DbscanClusterer
-import org.example.hdbscan.HdbscanClusterer
+import github.com.st235.facialprocessing.domain.clustering.hdbscan.HdbscanClusterer
 
 interface Clusterer<V> {
     enum class Algorithm {
