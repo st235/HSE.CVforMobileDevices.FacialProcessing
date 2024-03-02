@@ -10,10 +10,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -88,9 +90,7 @@ fun FeedScreen(
         viewModel.refreshProcessedData()
     }
 
-    val isPreparingToProcessing = state.isPreparingToProcessing
-    val isProcessing = state.isProcessingImages
-    val isClustering = state.isClusteringImages
+    val currentStatus = state.status
 
     Scaffold(
         modifier = modifier,
@@ -100,13 +100,11 @@ fun FeedScreen(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
                 ),
-                title = { Text(stringResource(R.string.clustering_feed_screen_title)) }
+                title = { Text(stringResource(R.string.clustering_feed_screen_title), fontWeight = FontWeight.Medium) }
             )
         },
         floatingActionButton = {
-            val canShowScanButton = !isPreparingToProcessing && !isProcessing && !isClustering
-
-            if (canShowScanButton) {
+            if (currentStatus.canShowScanButton) {
                 ExtendedFloatingActionButton(
                     icon = {
                         Icon(
@@ -130,51 +128,85 @@ fun FeedScreen(
             }
         }
     ) { paddings ->
-        if (isPreparingToProcessing) {
-            SpecialMessageView(
-                icon = R.drawable.ic_hourglass_top_24,
-                headline = stringResource(R.string.clustering_feed_screen_preparing_to_processing_title),
-                description = stringResource(R.string.clustering_feed_screen_preparing_to_processing_description),
-                progress = -1f
-            )
-        } else if (isProcessing) {
-            val progress = state.processingProgress
+        when (currentStatus) {
+            FeedUiState.Status.PREPARING_TO_PROCESSING -> {
+                SpecialMessageView(
+                    icon = R.drawable.ic_image_search_24,
+                    headline = stringResource(R.string.clustering_feed_screen_preparing_to_processing_title),
+                    description = stringResource(R.string.clustering_feed_screen_preparing_to_processing_description),
+                    progress = -1f,
+                    modifier = Modifier
+                        .padding(paddings)
+                        .fillMaxSize()
+                        .padding(64.dp),
+                )
+            }
 
-            SpecialMessageView(
-                icon = R.drawable.ic_ar_on_you_24,
-                headline = stringResource(R.string.clustering_feed_screen_image_processing_title),
-                description = stringResource(R.string.clustering_feed_screen_image_processing_description),
-                progress = progress
-            )
-        } else if (isClustering) {
-            SpecialMessageView(
-                icon = R.drawable.ic_groups_2_24,
-                headline = stringResource(R.string.clustering_feed_screen_clustering_title),
-                description = stringResource(R.string.clustering_feed_screen_clustering_description),
-                progress = -1f
-            )
-        } else {
-            val processedPhotos = state.imagesWithFaces
-            val searchAttributes = state.searchAttributes
-            val faceClusters = state.faceClusters
+            FeedUiState.Status.PROCESSING_IMAGES -> {
+                val progress = state.processingProgress
+                val unprocessedPhotosCount = state.photosToProcessCount
 
-            FeedLayout(
-                processedPhotos = processedPhotos,
-                searchAttributes = searchAttributes,
-                faceClusters = faceClusters,
-                onPhotoClick = { navController.navigate(Screen.Details.create(it.id)) },
-                onSeeMorePhotosClick = { navController.navigate(Screen.Search.create()) },
-                onClusterClick = { navController.navigate(Screen.Search.creteForCluster(it.id)) },
-                onSeeMoreClustersClick = { navController.navigate(Screen.Clusters.route) },
-                onSearchAttributeClick = {
-                    navController.navigate(
-                        Screen.Search.createForAttribute(
-                            it.id
+                SpecialMessageView(
+                    icon = R.drawable.ic_ar_on_you_24,
+                    headline = stringResource(R.string.clustering_feed_screen_image_processing_title),
+                    description = stringResource(R.string.clustering_feed_screen_image_processing_description, unprocessedPhotosCount),
+                    progress = progress,
+                    modifier = Modifier
+                        .padding(paddings)
+                        .fillMaxSize()
+                        .padding(64.dp),
+                )
+            }
+
+            FeedUiState.Status.CLUSTERING -> {
+                SpecialMessageView(
+                    icon = R.drawable.ic_groups_2_24,
+                    headline = stringResource(R.string.clustering_feed_screen_clustering_title),
+                    description = stringResource(R.string.clustering_feed_screen_clustering_description),
+                    progress = -1f,
+                    modifier = Modifier
+                        .padding(paddings)
+                        .fillMaxSize()
+                        .padding(64.dp),
+                )
+            }
+
+            FeedUiState.Status.LOADING_DATA -> {
+                SpecialMessageView(
+                    icon = R.drawable.ic_hourglass_top_24,
+                    headline = stringResource(R.string.clustering_feed_loading_title),
+                    description = stringResource(R.string.clustering_feed_loading_description),
+                    progress = -1f,
+                    modifier = Modifier
+                        .padding(paddings)
+                        .fillMaxSize()
+                        .padding(64.dp),
+                )
+            }
+
+            FeedUiState.Status.READY -> {
+                val processedPhotos = state.imagesWithFaces
+                val searchAttributes = state.searchAttributes
+                val faceClusters = state.faceClusters
+
+                FeedLayout(
+                    processedPhotos = processedPhotos,
+                    searchAttributes = searchAttributes,
+                    faceClusters = faceClusters,
+                    onPhotoClick = { navController.navigate(Screen.Details.create(it.id)) },
+                    onSeeMorePhotosClick = { navController.navigate(Screen.Search.create()) },
+                    onClusterClick = { navController.navigate(Screen.Search.creteForCluster(it.id)) },
+                    onSeeMoreClustersClick = { navController.navigate(Screen.Clusters.route) },
+                    onSearchAttributeClick = {
+                        navController.navigate(
+                            Screen.Search.createForAttribute(
+                                it.id
+                            )
                         )
-                    )
-                },
-                modifier = Modifier.padding(paddings),
-            )
+                    },
+                    modifier = Modifier.padding(paddings),
+                )
+            }
         }
     }
 }
@@ -185,49 +217,59 @@ private fun SpecialMessageView(
     headline: String,
     description: String,
     modifier: Modifier = Modifier,
-    headlineColor: Color = MaterialTheme.colorScheme.onSurface,
-    descriptionColor: Color = MaterialTheme.colorScheme.onSurface,
+    headlineColor: Color = MaterialTheme.colorScheme.onBackground,
+    descriptionColor: Color = MaterialTheme.colorScheme.onBackground,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    onBackgroundColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     progress: Float? = null,
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
     ) {
         Icon(
             painterResource(icon),
             contentDescription = null,
-            tint = headlineColor,
+            tint = onBackgroundColor,
             modifier = Modifier
                 .width(96.dp)
                 .height(96.dp)
+                .background(backgroundColor, CircleShape)
+                .padding(24.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = headline,
-            color = headlineColor,
-            fontWeight = FontWeight.Medium,
-            textAlign = TextAlign.Center,
-            fontSize = 26.sp
-        )
-        Spacer(modifier = Modifier.height(12.dp))
 
-        if (progress != null) {
-            if (progress >= 0f) {
-                LinearProgressIndicator(
-                    progress = progress,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            } else {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            if (progress != null && progress < 0f) {
                 CircularProgressIndicator(
-                    modifier = Modifier.width(32.dp),
+                    modifier = Modifier
+                        .width(16.dp)
+                        .height(16.dp),
                     color = descriptionColor,
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    trackColor = backgroundColor,
                 )
             }
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = headline,
+                color = headlineColor,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
+                fontSize = 26.sp
+            )
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+
+        if (progress != null && progress >= 0f) {
+            LinearProgressIndicator(
+                progress = progress,
+                modifier = Modifier.fillMaxWidth(),
+                trackColor = backgroundColor,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
         }
 
         Text(

@@ -5,23 +5,40 @@ import github.com.st235.facialprocessing.interactors.models.FaceSearchAttribute
 import github.com.st235.facialprocessing.interactors.models.MediaEntry
 
 data class FeedUiState(
-    val isPreparingToProcessing: Boolean,
-    val isProcessingImages: Boolean,
+    val status: Status,
+    val photosToProcessCount: Int,
     val processingProgress: Float,
-    val isClusteringImages: Boolean,
     val imagesWithFaces: List<MediaEntry>,
     val searchAttributes: Set<FaceSearchAttribute.Type>,
     val faceClusters: List<FaceCluster>,
 ) {
+    enum class Status {
+        PREPARING_TO_PROCESSING,
+        PROCESSING_IMAGES,
+        CLUSTERING,
+        LOADING_DATA,
+        READY,
+    }
+
     companion object {
         val EMPTY = FeedUiState(
-            isPreparingToProcessing = false,
-            isProcessingImages = false,
+            status = Status.READY,
+            photosToProcessCount = 0,
             processingProgress = 0f,
-            isClusteringImages = false,
             imagesWithFaces = emptyList(),
             searchAttributes = emptySet(),
             faceClusters = emptyList(),
         )
     }
 }
+
+val FeedUiState.Status.canShowScanButton: Boolean
+    get() {
+        return when(this) {
+            FeedUiState.Status.PREPARING_TO_PROCESSING -> false
+            FeedUiState.Status.PROCESSING_IMAGES -> false
+            FeedUiState.Status.CLUSTERING -> false
+            FeedUiState.Status.LOADING_DATA -> false
+            FeedUiState.Status.READY -> true
+        }
+    }

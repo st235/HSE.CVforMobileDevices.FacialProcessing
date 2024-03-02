@@ -31,11 +31,16 @@ class FeedViewModel(
 
     fun refreshProcessedData() {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                status = FeedUiState.Status.LOADING_DATA,
+            )
+
             val processedImages = feedInteractor.getProcessedImages()
             val searchAttributes = feedInteractor.getSearchAttributes()
             val faceClusters = feedInteractor.getFaceClusters()
 
             _uiState.value = _uiState.value.copy(
+                status = FeedUiState.Status.READY,
                 imagesWithFaces = processedImages.sample(5),
                 searchAttributes = searchAttributes,
                 faceClusters = faceClusters.sample(5),
@@ -47,7 +52,7 @@ class FeedViewModel(
         scanningJob?.cancel()
         scanningJob = viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
-                isPreparingToProcessing = true
+                status = FeedUiState.Status.PREPARING_TO_PROCESSING,
             )
 
             feedInteractor.startScanning(ScanningCallback())
@@ -59,8 +64,8 @@ class FeedViewModel(
         override fun onProcessingStart(unprocessedMediaCount: Int) {
             viewModelScope.launch {
                 _uiState.value = _uiState.value.copy(
-                    isPreparingToProcessing = false,
-                    isProcessingImages = true,
+                    status = FeedUiState.Status.PROCESSING_IMAGES,
+                    photosToProcessCount = unprocessedMediaCount,
                     processingProgress = 0f
                 )
             }
@@ -72,8 +77,7 @@ class FeedViewModel(
         ) {
             viewModelScope.launch {
                 _uiState.value = _uiState.value.copy(
-                    isPreparingToProcessing = false,
-                    isProcessingImages = true,
+                    status = FeedUiState.Status.PROCESSING_IMAGES,
                     processingProgress = progress
                 )
             }
@@ -86,8 +90,6 @@ class FeedViewModel(
         override fun onProcessingFinished() {
             viewModelScope.launch {
                 _uiState.value = _uiState.value.copy(
-                    isPreparingToProcessing = false,
-                    isProcessingImages = false,
                     processingProgress = 1f
                 )
             }
@@ -96,20 +98,13 @@ class FeedViewModel(
         override fun onClusteringStarted() {
             viewModelScope.launch {
                 _uiState.value = _uiState.value.copy(
-                    isPreparingToProcessing = false,
-                    isProcessingImages = false,
-                    isClusteringImages = true,
+                    status = FeedUiState.Status.CLUSTERING,
                 )
             }
         }
 
         override fun onClusteringFinished() {
             viewModelScope.launch {
-                _uiState.value = _uiState.value.copy(
-                    isPreparingToProcessing = false,
-                    isProcessingImages = false,
-                    isClusteringImages = false,
-                )
                 refreshProcessedData()
             }
         }
