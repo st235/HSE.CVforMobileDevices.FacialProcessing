@@ -5,12 +5,14 @@ import github.com.st235.facialprocessing.domain.clustering.Distance
 
 class HdbscanClusterer<T>(
     private val distanceMetric: Distance<T>,
-    private val filterProbability: Float = 0f
+    private val filterProbability: Float = 0f,
+    private val minClusterSize: Int = 5,
+    private val coreDistanceKnnRadius: Int = 5
 ): Clusterer<T> {
 
     override fun cluster(points: List<T>): List<Set<T>> {
         val distances = HdbscanUtils.getPairwiseDistances(points, distanceMetric)
-        val coreDistances = HdbscanUtils.calculateCoreDistances(distances, 5)
+        val coreDistances = HdbscanUtils.calculateCoreDistances(distances, coreDistanceKnnRadius)
         val mst = HdbscanUtils.constructMinimalSpanningTree(distances, coreDistances, true)
         mst.quicksortByEdgeWeight()
 
@@ -19,7 +21,7 @@ class HdbscanClusterer<T>(
         val hierarchyAndClusterTree = HdbscanUtils.computeHierarchyAndClusterTree(
             numPoints,
             mst,
-            minClusterSize = 5,
+            minClusterSize = minClusterSize,
             emptyList()
         )
         HdbscanUtils.propagateTree(hierarchyAndClusterTree.clusters)

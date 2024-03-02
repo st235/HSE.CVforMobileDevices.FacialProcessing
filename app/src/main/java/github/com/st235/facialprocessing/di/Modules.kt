@@ -36,7 +36,7 @@ private val dataModule = module {
 
 private val domainModule = module {
 
-    single<Distance<FaceWithMediaFileEntity>> { FaceDistanceMetric() }
+    single<Distance<FaceWithMediaFileEntity>> { FaceDistanceMetric.L2FaceDistanceMetric }
 
     single<Clusterer<FaceWithMediaFileEntity>> { Clusterer.create(get(), Clusterer.Algorithm.HDBSCAN) }
 
