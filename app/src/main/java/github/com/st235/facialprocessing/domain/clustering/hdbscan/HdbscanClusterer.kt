@@ -4,7 +4,8 @@ import github.com.st235.facialprocessing.domain.clustering.Clusterer
 import github.com.st235.facialprocessing.domain.clustering.Distance
 
 class HdbscanClusterer<T>(
-    private val distanceMetric: Distance<T>
+    private val distanceMetric: Distance<T>,
+    private val filterProbability: Float = 0f
 ): Clusterer<T> {
 
     override fun cluster(points: List<T>): List<Set<T>> {
@@ -29,7 +30,7 @@ class HdbscanClusterer<T>(
         val result = mutableMapOf<Int, MutableSet<T>>()
 
         for (i in prominentClusters.indices) {
-            if (membershipProbabilities[i] < 0.5) {
+            if (membershipProbabilities[i] < filterProbability) {
                 continue
             }
 

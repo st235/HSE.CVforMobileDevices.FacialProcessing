@@ -38,7 +38,7 @@ private val domainModule = module {
 
     single<Distance<FaceWithMediaFileEntity>> { FaceDistanceMetric() }
 
-    single<Clusterer<FaceWithMediaFileEntity>> { Clusterer.create(get(), Clusterer.Algorithm.DBSCAN) }
+    single<Clusterer<FaceWithMediaFileEntity>> { Clusterer.create(get(), Clusterer.Algorithm.HDBSCAN) }
 
     single { GalleryScanner(get(), get(), get(), get(), get()) }
 

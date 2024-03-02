@@ -292,7 +292,7 @@ object HdbscanUtils {
         val clusters = mutableListOf<Cluster?>()
         clusters.add(null)
 
-        //cluster cluster_object(1, NULL, std::numeric_limits<double>::quiet_NaN(),  mst->getNumVertices());
+        //cluster cluster_object(1, NULL, std::numeric_limits<double>::quiet_NaN(),  mst->getNumVertices())
         clusters.add(Cluster(clusterIdFactory, 1, null, Double.NaN, mst.getNumberOfVertices()))
         clusterIdFactory += 1
 
@@ -334,7 +334,7 @@ object HdbscanUtils {
             }
 
             // Check each affected cluster for a possible split:
-            while (!affectedClusterLabels.isEmpty()) {
+            while (affectedClusterLabels.isNotEmpty()) {
 
                 // Retrieves and removes the last affected cluster.
                 val examinedClusterLabel = affectedClusterLabels.poll()
@@ -365,7 +365,7 @@ object HdbscanUtils {
                 * split, otherwise, only spurious components are fully explored, in order to label
                 * them noise.
                 */
-                while (!examinedVertices.isEmpty()) {
+                while (examinedVertices.isNotEmpty()) {
                     val constructingSubCluster = TreeSet<Int>()
 
                     val unexploredSubClusterPoints = LinkedList<Int>()
@@ -378,7 +378,7 @@ object HdbscanUtils {
                     examinedVertices.remove(rootVertex)
 
                     // Explore this potential child cluster as long as there are unexplored points:
-                    while (!unexploredSubClusterPoints.isEmpty()) {
+                    while (unexploredSubClusterPoints.isNotEmpty()) {
                         val vertexToExplore = unexploredSubClusterPoints.poll()
 
                         for (neighbor in mst.getEdgeListForVertex(vertexToExplore)) {
@@ -415,16 +415,16 @@ object HdbscanUtils {
                             val newCluster = createNewCluster(
                                 constructingSubCluster, currentClusterLabels,
                                 clusters[examinedClusterLabel], nextClusterLabel, currentEdgeWeight
-                            );
+                            )
                             newClusters.add(newCluster)
-                            clusters.add(newCluster);
-                            nextClusterLabel++;
+                            clusters.add(newCluster)
+                            nextClusterLabel++
                         }
                     } else if (constructingSubCluster.size < minClusterSize || !anyEdges) {
                         createNewCluster(
                             constructingSubCluster, currentClusterLabels,
                             clusters[examinedClusterLabel], 0, currentEdgeWeight
-                        );
+                        )
 
                         for (point in constructingSubCluster) {
                             pointNoiseLevels[point] = currentEdgeWeight
@@ -433,10 +433,8 @@ object HdbscanUtils {
                     }
                 }
                 // Finish exploring and cluster the first child cluster if there was a split and it was not already clustered:
-                if (numChildClusters >= 2 && currentClusterLabels[firstChildCluster.iterator()
-                        .next()] == examinedClusterLabel
-                ) {
-                    while (!unexploredFirstChildClusterPoints.isEmpty()) {
+                if (numChildClusters >= 2 && currentClusterLabels[firstChildCluster.iterator().next()] == examinedClusterLabel) {
+                    while (unexploredFirstChildClusterPoints.isNotEmpty()) {
                         val vertexToExplore = unexploredFirstChildClusterPoints.poll()
 
                         for (neighbor in mst.getEdgeListForVertex(vertexToExplore)) {
@@ -476,10 +474,11 @@ object HdbscanUtils {
             for (i in previousClusterLabels.indices) {
                 previousClusterLabels[i] = currentClusterLabels[i]
             }
-            if (newClusters.isEmpty()) {
-                nextLevelSignificant = false;
+
+            nextLevelSignificant = if (newClusters.isEmpty()) {
+                false
             } else {
-                nextLevelSignificant = true;
+                true
             }
         }
 
@@ -519,18 +518,24 @@ object HdbscanUtils {
 
         //Iterate through every cluster, propagating stability from children to parents:
         while (!clustersToExamine.isEmpty()) {
-            val currentCluster = clustersToExamine.pollLastEntry().value
-            currentCluster!!.propagate()
+            val currentClusterEntry = clustersToExamine.pollLastEntry()
+            val currentCluster = currentClusterEntry.value
+            clustersToExamine.remove(currentClusterEntry.key)
 
-            if (currentCluster!!.stability == Double.POSITIVE_INFINITY) infiniteStability = true
+            if (currentCluster == null) {
+                continue
+            }
 
-            if (currentCluster!!.parent != null) {
-                val parent = currentCluster!!.parent
+            currentCluster.propagate()
 
-                if (!addedToExaminationList[parent!!.label]) {
-                    clustersToExamine[parent!!.label] = parent
-                    addedToExaminationList.set(parent!!.label)
-                }
+            if (currentCluster.stability == Double.POSITIVE_INFINITY) {
+                infiniteStability = true
+            }
+
+            val parent = currentCluster.parent
+            if (parent != null && !addedToExaminationList[parent.label]) {
+                clustersToExamine[parent.label] = parent
+                addedToExaminationList.set(parent.label)
             }
         }
 
@@ -551,7 +556,7 @@ object HdbscanUtils {
 
         for (cluster in solution) {
             val hierarchyPosition = cluster.hierarchyPosition
-            if (!significantHierarchyPositions.contains(hierarchyPosition)) {
+            if (!significantHierarchyPositions.containsKey(hierarchyPosition)) {
                 significantHierarchyPositions[hierarchyPosition] = mutableListOf()
             }
 
@@ -568,14 +573,14 @@ object HdbscanUtils {
 
             val lineContents = hierarchy[hierarchyPosition]
 
-            for (i in 1 until lineContents.size) {
-                val label = lineContents[i].toInt()
+            for (i in lineContents.indices) {
+                val label = lineContents[i]
                 if (clusterList.contains(label)) {
                     flatPartitioning[i] = label
                 }
             }
         }
-        return flatPartitioning;
+        return flatPartitioning
     }
 
     fun findMembershipScore(
