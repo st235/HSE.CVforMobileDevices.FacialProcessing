@@ -1,10 +1,12 @@
 package github.com.st235.facialprocessing.domain.clustering
 
 import github.com.st235.facialprocessing.domain.clustering.dbscan.DbscanClusterer
+import org.example.hdbscan.HdbscanClusterer
 
 interface Clusterer<V> {
     enum class Algorithm {
         DBSCAN,
+        HDBSCAN,
     }
 
     fun cluster(points: List<V>): List<Set<V>>
@@ -22,6 +24,9 @@ interface Clusterer<V> {
                     minimumNumberOfClusterMembers = 5,
                     maxDistanceBetweenElementsInACluster = 0.78,
                     metric = metric
+                )
+                Algorithm.HDBSCAN -> HdbscanClusterer(
+                    distanceMetric = metric
                 )
             }
         }
