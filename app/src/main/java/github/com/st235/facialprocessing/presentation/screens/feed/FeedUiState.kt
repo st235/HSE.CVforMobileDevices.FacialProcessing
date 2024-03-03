@@ -23,7 +23,7 @@ data class FeedUiState(
 
     companion object {
         val EMPTY = FeedUiState(
-            status = Status.READY,
+            status = Status.LOADING_DATA,
             photosToProcessCount = 0,
             processingProgress = 0f,
             imagesWithFaces = emptyList(),
