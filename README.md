@@ -16,6 +16,7 @@ The main technologies used in the project:
 
 - Kotlin + [Coroutines](https://kotlinlang.org/docs/coroutines-overview.html)
 - [Jetpack Compose](https://developer.android.com/jetpack/compose): a robust technology to build UI
+- [Room](https://developer.android.com/training/data-storage/room): Android persistence library
 - [Tensorflow Lite](https://www.tensorflow.org/lite/android): Framework for running ML models on mobile
 
 ## Pre-work
@@ -65,7 +66,54 @@ I trained the model in the following settings:
 
 
 ⚠️ The notebooks with pre-processing and training scripts can be found in [my gists](https://gist.github.com/st235/b3e658f383404acce551d8d7374a61bc).
-⚠️⚠️ Pre-trained weights and TF Lite models can be found in [my Google Drive](https://drive.google.com/drive/folders/1y8XXubvsFeie4qDxjQEMzf3dV7uQFq8D?usp=sharing)
+
+⚠️⚠️ Pre-trained weights and TF Lite models can be found in [my Google Drive](https://drive.google.com/drive/folders/1y8XXubvsFeie4qDxjQEMzf3dV7uQFq8D?usp=sharing).
+
+## Application
+
+### General Overview
+
+The application scans for the following attributes:
+- Age
+- Gender
+- Emotion: anger, disgust, fear, happiness, neutral, sadness and surprise
+- Smiling
+- Beard
+- Mustache
+- Eyeglasses
+
+The attributes are extracted with a few different models, specially trained for the tasks. You can find
+  all of these pretrained models under [`raw` folder](./app/src/main/res/raw):
+- Face Detection: [MobileNet V2 MediaPipe, Full Range](https://developers.google.com/mediapipe/solutions/vision/face_detector)
+- Age: MobileNet MediaPipe
+- Gender: MobileNet MediaPipe
+- Emotions: MobileNet
+- Facial Attributes: [MobileNet V3 Large, was trained in the scope of this project](#pre-work)
+- Face Embeddings: FaceNet Mobile
+
+### Cache
+
+Caching is done via [SQLite](https://developer.android.com/training/data-storage/sqlite) as it allows
+to organise data in a convenient manner and queries this data efficiently.
+
+As an ORM framework I used Room [(see Technologies section for details)](#technologies).
+
+There are 3 tables:
+- Face
+- Media File: I store them separately to save the processed images with **no faces** on them
+- Clusters
+
+The implementation of the persistent layer can be found under [`data` folder](./app/src/main/java/github/com/st235/facialprocessing/data).
+
+### Clustering
+
+Once the embeddings are extracted, they are clustered together based on the classical clustering algorithms.
+
+There are 2 algorithms implemented for image clustering. All algorithms can be found under [`domain/clustering` folder](./app/src/main/java/github/com/st235/facialprocessing/domain/clustering):
+- [DBSCAN](https://en.wikipedia.org/wiki/DBSCAN): [implementation](./app/src/main/java/github/com/st235/facialprocessing/domain/clustering/dbscan/DbscanClusterer.kt)
+- [HDBSCAN](https://hdbscan.readthedocs.io/en/latest/how_hdbscan_works.html): [implementation](./app/src/main/java/github/com/st235/facialprocessing/domain/clustering/hdbscan/HdbscanClusterer.kt)
+
+The final implementation of the app is using **HDBSCAN**.
 
 ## Misc
 
@@ -83,3 +131,34 @@ Videos from the playlist are:
 
 ### Evaluation Criteria List
 
+> 0-5: Processing of all photos from a gallery is supported
+
+✅
+
+> 0-5: The results of processing are stored in a file, so that it is not necessary to process the whole gallery after restart of the application
+
+✅ See [Cache section](#cache)
+
+> 0-5: The neural network models from examples provided for this course are used
+
+✅ Pre-trained MobileNet for emotions recognition, see [General overview](#general-overview) 
+
+> 0-10: At least one extra model (not presented in the examples provided for this course) for facial attribute recognition is used
+
+✅ MediaPipe models for age and gender, custom pre-trained MobileNet V3 for 4 attributes (beard, eyeglasses, mustache, smiling), see [General overview](#general-overview)
+
+> 0-10: Clustering identical faces by using face recognition model is supported
+
+✅
+
+> 0-5: At least one extra model (not presented in the examples provided for this course) for face recognition is used
+
+✅ Mobile FaceNet, see [General overview](#general-overview)
+
+0-15: Special face clustering methods that use specific of faces are implemented, e.g., https://personal.ie.cuhk.edu.hk/~ccloy/files/aaai_2018_merge.pdf
+
+✅ HDBSCAN, see [Clustering section](#clustering)
+
+> 0-15: Visualization of the results by grouping the photos with identical value of selected attribute
+
+✅
