@@ -39,8 +39,14 @@ class FeedViewModel(
             val searchAttributes = feedInteractor.getSearchAttributes()
             val faceClusters = feedInteractor.getFaceClusters()
 
+            val status = if (processedImages.isEmpty()) {
+                FeedUiState.Status.EMPTY
+            } else {
+                FeedUiState.Status.READY
+            }
+
             _uiState.value = _uiState.value.copy(
-                status = FeedUiState.Status.READY,
+                status = status,
                 imagesWithFaces = processedImages.sample(5),
                 searchAttributes = searchAttributes,
                 faceClusters = faceClusters.sample(5),

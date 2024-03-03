@@ -31,6 +31,10 @@
     <string name="clustering_feed_attributes_section_description">These are the tags that we have extracted from the images.</string>
     <string name="clustering_feed_loading_title">Loading…</string>
     <string name="clustering_feed_loading_description">Thank you for your patience while we are fetching your data from the cache.</string>
+    <string name="clustering_feed_empty_title">Nothing found?</string>
+    <string name="clustering_feed_empty_description">No preprocessed images found in the cache. Try clicking the button below to find new images.</string>
+    <string name="clustering_feed_no_permission_title">No gallery permission</string>
+    <string name="clustering_feed_no_permission_description">This app requires permissions to scan your gallery. Please, click the button below and grant necessary permissions.</string>
 
     <string name="clustering_feed_screen_preparing_to_processing_title">Scanning…</string>
     <string name="clustering_feed_screen_preparing_to_processing_description">Scanning your gallery to find new or unprocessed photos.</string>

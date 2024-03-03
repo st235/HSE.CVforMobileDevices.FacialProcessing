@@ -18,6 +18,7 @@ data class FeedUiState(
         CLUSTERING,
         LOADING_DATA,
         READY,
+        EMPTY,
     }
 
     companion object {
@@ -40,5 +41,6 @@ val FeedUiState.Status.canShowScanButton: Boolean
             FeedUiState.Status.CLUSTERING -> false
             FeedUiState.Status.LOADING_DATA -> false
             FeedUiState.Status.READY -> true
+            FeedUiState.Status.EMPTY -> true
         }
     }

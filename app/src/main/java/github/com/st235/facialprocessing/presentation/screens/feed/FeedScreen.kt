@@ -87,7 +87,9 @@ fun FeedScreen(
         }
 
     LaunchedEffect(true) {
-        viewModel.refreshProcessedData()
+        if (state.status != FeedUiState.Status.READY) {
+            viewModel.refreshProcessedData()
+        }
     }
 
     val currentStatus = state.status
@@ -129,8 +131,22 @@ fun FeedScreen(
             }
         }
     ) { paddings ->
-        when (currentStatus) {
-            FeedUiState.Status.PREPARING_TO_PROCESSING -> {
+        val hasGalleryPermission = isReadMediaImagesPermissionGranted(context)
+
+        when {
+            !hasGalleryPermission -> {
+                SpecialMessageView(
+                    icon = R.drawable.ic_folder_limited_24,
+                    headline = stringResource(R.string.clustering_feed_no_permission_title),
+                    description = stringResource(R.string.clustering_feed_no_permission_description),
+                    modifier = Modifier
+                        .padding(paddings)
+                        .fillMaxSize()
+                        .padding(64.dp),
+                )
+            }
+
+            currentStatus == FeedUiState.Status.PREPARING_TO_PROCESSING -> {
                 SpecialMessageView(
                     icon = R.drawable.ic_image_search_24,
                     headline = stringResource(R.string.clustering_feed_screen_preparing_to_processing_title),
@@ -143,7 +159,7 @@ fun FeedScreen(
                 )
             }
 
-            FeedUiState.Status.PROCESSING_IMAGES -> {
+            currentStatus == FeedUiState.Status.PROCESSING_IMAGES -> {
                 val progress = state.processingProgress
                 val unprocessedPhotosCount = state.photosToProcessCount
 
@@ -159,7 +175,7 @@ fun FeedScreen(
                 )
             }
 
-            FeedUiState.Status.CLUSTERING -> {
+            currentStatus == FeedUiState.Status.CLUSTERING -> {
                 SpecialMessageView(
                     icon = R.drawable.ic_groups_2_24,
                     headline = stringResource(R.string.clustering_feed_screen_clustering_title),
@@ -172,7 +188,7 @@ fun FeedScreen(
                 )
             }
 
-            FeedUiState.Status.LOADING_DATA -> {
+            currentStatus == FeedUiState.Status.LOADING_DATA -> {
                 SpecialMessageView(
                     icon = R.drawable.ic_hourglass_top_24,
                     headline = stringResource(R.string.clustering_feed_loading_title),
@@ -185,7 +201,19 @@ fun FeedScreen(
                 )
             }
 
-            FeedUiState.Status.READY -> {
+            currentStatus == FeedUiState.Status.EMPTY -> {
+                SpecialMessageView(
+                    icon = R.drawable.ic_hide_image_24,
+                    headline = stringResource(R.string.clustering_feed_empty_title),
+                    description = stringResource(R.string.clustering_feed_empty_description),
+                    modifier = Modifier
+                        .padding(paddings)
+                        .fillMaxSize()
+                        .padding(64.dp),
+                )
+            }
+
+            currentStatus == FeedUiState.Status.READY -> {
                 val processedPhotos = state.imagesWithFaces
                 val searchAttributes = state.searchAttributes
                 val faceClusters = state.faceClusters
