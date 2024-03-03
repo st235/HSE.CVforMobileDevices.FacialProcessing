@@ -62,5 +62,8 @@ val darkSurfaceTint = Color(0xFFFFB94C)
 val darkOutlineVariant = Color(0xFF4F4539)
 val darkScrim = Color(0xFF000000)
 
+val facePreviewAreaBackground = Color(0xFF212121)
+val brightActiveFaceHighlightColor = Color(0xFFD2691E)
+val brightInactiveFaceHighlightColor = Color(0xFFFDF5E2)
 
 val seed = Color(0xFFFDD2BF)

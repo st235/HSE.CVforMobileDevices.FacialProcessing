@@ -18,6 +18,7 @@
     <string name="search_attribute_emotion_neutral">Neutral</string>
     <string name="search_attribute_emotion_sadness">Sadness</string>
     <string name="search_attribute_emotion_surprise">Surprise</string>
+    <string name="search_attribute_emotion_unknown">Unknown</string>
 
     <string name="clustering_feed_screen_title">Faces Gallery</string>
     <string name="clustering_feed_screen_scan_button">Detect Faces</string>
@@ -26,7 +27,7 @@
     <string name="clustering_feed_all_photos_section_description">Photos from the gallery with one or more faces on it.</string>
     <string name="clustering_feed_clusters_section_title">People</string>
     <string name="clustering_feed_clusters_section_description">We have tried to analyse the images in the gallery and group photos by people on them.</string>
-    <string name="clustering_feed_attributes_section_title">Tags</string>
+    <string name="clustering_feed_attributes_section_title">#tags</string>
     <string name="clustering_feed_attributes_section_description">These are the tags that we have extracted from the images.</string>
     <string name="clustering_feed_loading_title">Loading…</string>
     <string name="clustering_feed_loading_description">Thank you for your patience while we are fetching your data from the cache.</string>
@@ -45,4 +46,14 @@
     <string name="search_screen_cluster_placeholder">Person</string>
 
     <string name="clusters_screen_title">All Clusters</string>
+    
+    <string name="detailed_screen_image_description_title">#tags</string>
+    <string name="detailed_screen_image_description_description">These are the tags that we were able to extract from all faces on the image. Click on the face to see detailed information about the person.</string>
+    <string name="detailed_screen_face_description_title">Person information</string>
+    <string name="detailed_screen_face_description_cluster">See similar photos</string>
+    <string name="detailed_screen_face_description_age">Age: %d</string>
+    <string name="detailed_screen_face_description_gender">Gender: %s</string>
+    <string name="detailed_screen_face_description_mood">Emotion: %s</string>
+    <string name="detailed_screen_face_description_attributes">Attributes: %s</string>
+    <string name="detailed_screen_face_description_tags">#tags</string>
 </resources>

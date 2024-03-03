@@ -15,15 +15,55 @@ class DetailsViewModel(
 
     val uiState = _uiState.asStateFlow()
 
-    fun loadState(mediaId: Int) {
+    fun loadState(mediaId: Long, clusterId: Int?) {
         viewModelScope.launch {
+            _uiState.value = DetailsUiState.EMPTY.copy(
+                isLoading = true
+            )
+
             val bitmap = detailsInteractor.findMediaById(mediaId)
-            val (faceDescriptors, searchAttributes) = detailsInteractor.findFacesByMediaId(mediaId)
+            val (faceDescriptors, imageSearchAttributes) = detailsInteractor.findFacesByMediaId(mediaId)
+            val allFacesInMediaFileBelongToTheSameCluster = if (clusterId != null) {
+                detailsInteractor.getAllFacesInImageInTheSameCluster(mediaId, clusterId)
+            } else {
+                emptyList()
+            }
+
+            val faceId = when {
+                faceDescriptors.size == 1 -> faceDescriptors.keys.first()
+                allFacesInMediaFileBelongToTheSameCluster.size == 1 -> allFacesInMediaFileBelongToTheSameCluster.first()
+                else -> null
+            }
+
+            val faceCluster = if (faceId != null) {
+                detailsInteractor.getFaceClusterByFaceId(faceId)
+            } else {
+                null
+            }
 
             _uiState.value = _uiState.value.copy(
                 bitmap = bitmap,
+                selectedFaceId = faceId,
+                selectedFaceCluster = faceCluster,
                 faceDescriptors = faceDescriptors,
-                searchAttributes = searchAttributes,
+                searchAttributes = imageSearchAttributes,
+            )
+        }
+    }
+
+    fun selectFace(faceId: Int) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                isLoading = true,
+                selectedFaceId = faceId,
+            )
+
+            val faceCluster = detailsInteractor.getFaceClusterByFaceId(faceId)
+
+            _uiState.value = _uiState.value.copy(
+                isLoading = false,
+                selectedFaceId = faceId,
+                selectedFaceCluster = faceCluster,
             )
         }
     }

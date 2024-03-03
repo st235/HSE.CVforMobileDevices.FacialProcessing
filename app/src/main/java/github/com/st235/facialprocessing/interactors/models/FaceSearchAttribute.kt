@@ -167,7 +167,19 @@ sealed class FaceSearchAttribute(
     }
 }
 
-fun List<FaceWithMediaFileEntity>.asSearchAttributes(): Set<FaceSearchAttribute.Type> {
+fun FaceWithMediaFileEntity.extractFaceSearchAttributes(): Set<FaceSearchAttribute.Type> {
+    val attributes = mutableSetOf<FaceSearchAttribute.Type>()
+
+    for (searchAttribute in FaceSearchAttribute.SEARCH_ATTRIBUTES) {
+        if (searchAttribute.isApplicable(this)) {
+            attributes.add(searchAttribute.type)
+        }
+    }
+
+    return attributes
+}
+
+fun List<FaceWithMediaFileEntity>.extractImageFaceAttributes(): Set<FaceSearchAttribute.Type> {
     val attributes = mutableSetOf<FaceSearchAttribute.Type>()
 
     for (face in this) {

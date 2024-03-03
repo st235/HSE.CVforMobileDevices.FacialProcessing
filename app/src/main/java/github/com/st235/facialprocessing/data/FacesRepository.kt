@@ -32,7 +32,7 @@ class FacesRepository(
         return faceDao.getById(faceId)
     }
 
-    fun getMediaFileById(mediaId: Int): MediaFileEntity {
+    fun getMediaFileById(mediaId: Long): MediaFileEntity {
         return mediaFilesDao.getById(mediaId)
     }
 
@@ -44,7 +44,7 @@ class FacesRepository(
         return faceDao.getMediaFilesWithFaces()
     }
 
-    fun getAllFacesAtMediaFile(mediaId: Int): List<FaceWithMediaFileEntity> {
+    fun getAllFacesAtMediaFile(mediaId: Long): List<FaceWithMediaFileEntity> {
         return faceDao.getAllFacesByMediaFile(mediaId)
     }
 
@@ -68,6 +68,10 @@ class FacesRepository(
 
     fun getFaceToClusterLookup(): Map<Int, Int> {
         return clustersDao.getAll().associate { it.faceId to it.clusterId }
+    }
+
+    fun getClusterIdByFaceId(faceId: Int): Int {
+        return clustersDao.getClusterIdByFaceId(faceId)
     }
 
     fun getClusterToFacesLookup(): Map<Int, List<Int>> {

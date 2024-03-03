@@ -50,7 +50,7 @@ import github.com.st235.facialprocessing.utils.textRes
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalGlideComposeApi::class)
 fun SearchScreen(
-    personId: Int?,
+    clusterId: Int?,
     searchAttributeIds: List<Int>,
     viewModel: SearchViewModel,
     navController: NavController,
@@ -59,7 +59,7 @@ fun SearchScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(true) {
-        viewModel.loadState(personId, searchAttributeIds)
+        viewModel.loadState(clusterId, searchAttributeIds)
     }
 
     Scaffold(
@@ -117,7 +117,7 @@ fun SearchScreen(
                             navController.navigate(
                                 Screen.Details.create(
                                     photo.id,
-                                    personId
+                                    clusterId
                                 )
                             )
                         }

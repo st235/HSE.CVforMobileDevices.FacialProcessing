@@ -3,21 +3,21 @@ package github.com.st235.facialprocessing.presentation.screens
 sealed class Screen(val route: String) {
     data object Feed: Screen(route = "feed")
 
-    data object Details: Screen("details/{media_id}/{face_id}") {
+    data object Details: Screen("details/{media_id}/{cluster_id}") {
         const val MEDIA_ID = "media_id"
-        const val FACE_ID = "face_id"
-        const val FACE_NULL = -1
+        const val CLUSTER_ID = "cluster_id"
+        const val CLUSTER_NULL = -1
 
         fun create(
             mediaId: Long,
-            faceId: Int? = null,
+            clusterId: Int? = null,
         ): String {
-            val face = if (faceId == null || faceId < 0) {
-                FACE_NULL
+            val cluster = if (clusterId == null || clusterId < 0) {
+                CLUSTER_NULL
             } else {
-                faceId
+                clusterId
             }
-            return "details/$mediaId/$face"
+            return "details/$mediaId/$cluster"
         }
     }
 

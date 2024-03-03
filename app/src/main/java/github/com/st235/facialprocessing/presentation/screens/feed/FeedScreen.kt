@@ -196,7 +196,7 @@ fun FeedScreen(
                     faceClusters = faceClusters,
                     onPhotoClick = { navController.navigate(Screen.Details.create(it.id)) },
                     onSeeMorePhotosClick = { navController.navigate(Screen.Search.create()) },
-                    onClusterClick = { navController.navigate(Screen.Search.creteForCluster(it.id)) },
+                    onClusterClick = { navController.navigate(Screen.Search.creteForCluster(it.clusterId)) },
                     onSeeMoreClustersClick = { navController.navigate(Screen.Clusters.route) },
                     onSearchAttributeClick = {
                         navController.navigate(

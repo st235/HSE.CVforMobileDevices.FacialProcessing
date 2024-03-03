@@ -69,18 +69,18 @@ fun AppNavHost(
         composable(
             route = Screen.Details.route,
             arguments = listOf(
-                navArgument(Screen.Details.MEDIA_ID) { type = NavType.IntType },
-                navArgument(Screen.Details.FACE_ID) { type = NavType.IntType },
+                navArgument(Screen.Details.MEDIA_ID) { type = NavType.LongType },
+                navArgument(Screen.Details.CLUSTER_ID) { type = NavType.IntType },
             )
         ) { backStackEntry ->
-            val mediaId = backStackEntry.arguments?.getInt(Screen.Details.MEDIA_ID) ?: -1
-            val faceId = backStackEntry.arguments?.getInt(Screen.Details.FACE_ID) ?: -1
+            val mediaId = backStackEntry.arguments?.getLong(Screen.Details.MEDIA_ID) ?: -1
+            val clusterId = backStackEntry.arguments?.getInt(Screen.Details.CLUSTER_ID) ?: -1
 
             val viewModel = koinViewModel<DetailsViewModel>()
 
             DetailsScreen(
                 mediaId = mediaId,
-                faceId = if (faceId == Screen.Details.FACE_NULL) { null } else {  faceId },
+                clusterId = if (clusterId == Screen.Details.CLUSTER_NULL) { null } else {  clusterId },
                 viewModel = viewModel,
                 navController = navController,
                 modifier = modifier
@@ -98,7 +98,7 @@ fun AppNavHost(
             val viewModel = koinViewModel<SearchViewModel>()
 
             SearchScreen(
-                personId = Screen.Search.getPersonId(query),
+                clusterId = Screen.Search.getPersonId(query),
                 searchAttributeIds = Screen.Search.getAttributes(query),
                 viewModel = viewModel,
                 navController = navController,

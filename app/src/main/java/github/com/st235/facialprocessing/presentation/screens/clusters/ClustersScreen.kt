@@ -89,7 +89,7 @@ fun ClustersScreen(
                         .padding(8.dp)
                         .clip(CircleShape)
                         .focusable()
-                        .clickable { navController.navigate(Screen.Search.creteForCluster(faceCluster.id)) }
+                        .clickable { navController.navigate(Screen.Search.creteForCluster(faceCluster.clusterId)) }
                 )
             }
         }

@@ -10,6 +10,9 @@ interface ClusterDAO {
     @Insert
     fun insert(vararg clusterEntity: ClusterEntity)
 
+    @Query("SELECT clusters.cluster_id FROM clusters WHERE clusters.face_id = :faceId")
+    fun getClusterIdByFaceId(faceId: Int): Int
+
     @Query("SELECT * FROM clusters")
     fun getAll(): List<ClusterEntity>
 

@@ -11,7 +11,7 @@ interface MediaFilesDAO {
     fun insert(vararg mediaFileEntities: MediaFileEntity)
 
     @Query("SELECT * FROM media_file WHERE media_file.media_id = :id")
-    fun getById(id: Int): MediaFileEntity
+    fun getById(id: Long): MediaFileEntity
 
     @Query("SELECT * FROM media_file")
     fun getProcessedMediaFiles(): List<MediaFileEntity>

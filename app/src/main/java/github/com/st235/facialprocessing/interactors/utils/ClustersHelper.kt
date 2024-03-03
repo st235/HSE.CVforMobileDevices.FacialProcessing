@@ -2,11 +2,13 @@ package github.com.st235.facialprocessing.interactors.utils
 
 import android.graphics.Bitmap
 import android.net.Uri
+import androidx.annotation.WorkerThread
 import github.com.st235.facialprocessing.data.FacesRepository
 import github.com.st235.facialprocessing.interactors.models.FaceCluster
 import github.com.st235.facialprocessing.utils.LocalUriLoader
 import github.com.st235.facialprocessing.utils.rescale
 
+@WorkerThread
 fun extractClusters(
     facesRepository: FacesRepository,
     localUriLoader: LocalUriLoader,
@@ -34,7 +36,7 @@ fun extractClusters(
 
         faceClusters.add(
             FaceCluster(
-                id = clusterId,
+                clusterId = clusterId,
                 sampleFace = faceBitmap
             )
         )
@@ -47,6 +49,7 @@ fun extractClusters(
     return faceClusters
 }
 
+@WorkerThread
 fun extractCluster(
     clusterId: Int,
     facesRepository: FacesRepository,
@@ -71,7 +74,7 @@ fun extractCluster(
     ).rescale(maxWidth = 64, maxHeight = 64)
 
     return FaceCluster(
-        id = clusterId,
+        clusterId = clusterId,
         sampleFace = faceBitmap
     )
 }
