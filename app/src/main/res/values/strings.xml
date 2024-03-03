@@ -40,7 +40,9 @@
 
     <string name="details_screen_title">Preview</string>
 
-    <string name="search_screen_title">Search</string>
+    <string name="search_screen_generic_title">Search results</string>
+    <string name="search_screen_specific_title">Search by</string>
+    <string name="search_screen_cluster_placeholder">Person</string>
 
     <string name="clusters_screen_title">All Clusters</string>
 </resources>

@@ -3,15 +3,19 @@ package github.com.st235.facialprocessing.interactors
 import android.net.Uri
 import github.com.st235.facialprocessing.data.FacesRepository
 import github.com.st235.facialprocessing.data.db.FaceWithMediaFileEntity
+import github.com.st235.facialprocessing.interactors.models.FaceCluster
 import github.com.st235.facialprocessing.interactors.models.FaceSearchAttribute
 import github.com.st235.facialprocessing.interactors.models.MediaEntry
 import github.com.st235.facialprocessing.interactors.models.asMediaEntry
+import github.com.st235.facialprocessing.interactors.utils.extractCluster
 import github.com.st235.facialprocessing.utils.Assertion
+import github.com.st235.facialprocessing.utils.LocalUriLoader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class SearchInteractor(
     private val facesRepository: FacesRepository,
+    private val localUriLoader: LocalUriLoader,
 ) {
 
     private val executionContext = Dispatchers.IO
@@ -41,5 +45,15 @@ class SearchInteractor(
                 Uri.parse(it.mediaUrl)
             )
         }.map<MediaEntry, List<FaceWithMediaFileEntity>, MediaEntry> { it.key }
+    }
+
+    suspend fun getSearchAttributesByIds(attributeIds: List<Int>): List<FaceSearchAttribute.Type> = withContext(executionContext) {
+        Assertion.assertOnWorkerThread()
+        return@withContext attributeIds.map { FaceSearchAttribute.findSearchAttributesByTypeId(it).type }
+    }
+
+    suspend fun getFaceCluster(clusterId: Int): FaceCluster = withContext(executionContext) {
+        Assertion.assertOnWorkerThread()
+        return@withContext extractCluster(clusterId, facesRepository, localUriLoader)
     }
 }

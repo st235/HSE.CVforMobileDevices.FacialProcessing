@@ -342,14 +342,14 @@ private fun PhotoCard(
                 text = stringResource(R.string.clustering_feed_all_photos_section_title),
                 description = stringResource(R.string.clustering_feed_all_photos_section_description),
                 textColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = 16.dp, bottom = 6.dp, start = 16.dp, end = 16.dp)
+                modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
             )
             ProcessedPhotos(
                 photos = photos,
                 onPhotoClick = onPhotoClick,
                 onSeeMorePhotosClick = onSeeMorePhotosClick,
                 modifier = Modifier
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 8.dp, vertical = 8.dp)
             )
         }
     }

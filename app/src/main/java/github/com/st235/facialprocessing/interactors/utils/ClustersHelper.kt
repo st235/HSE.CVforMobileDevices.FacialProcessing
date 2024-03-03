@@ -15,7 +15,7 @@ fun extractClusters(
     val faceClusters = mutableListOf<FaceCluster>()
     val clusters = facesRepository.getClusterToFacesLookup()
 
-    for (cluster in clusters.entries) {
+    for (cluster in clusters.entries.sortedBy { it.key }) {
         val clusterId = cluster.key
         val randomFaceId = cluster.value.min()
         val randomFaceEntity = facesRepository.getFaceById(randomFaceId)
@@ -46,3 +46,33 @@ fun extractClusters(
 
     return faceClusters
 }
+
+fun extractCluster(
+    clusterId: Int,
+    facesRepository: FacesRepository,
+    localUriLoader: LocalUriLoader,
+): FaceCluster {
+    val clusters = facesRepository.getClusterToFacesLookup()
+
+    val cluster = clusters.getValue(clusterId)
+    val randomFaceId = cluster.min()
+    val randomFaceEntity = facesRepository.getFaceById(randomFaceId)
+
+    val mediaFile = localUriLoader.load(Uri.parse(randomFaceEntity.mediaUrl))
+
+    if (mediaFile == null) {
+        throw IllegalStateException("Media file should never be null.")
+    }
+
+    val faceBitmap = Bitmap.createBitmap(
+        mediaFile,
+        (randomFaceEntity.left * mediaFile.width).toInt(), (randomFaceEntity.top * mediaFile.height).toInt(),
+        (randomFaceEntity.width * mediaFile.width).toInt(), (randomFaceEntity.height * mediaFile.height).toInt(),
+    ).rescale(maxWidth = 64, maxHeight = 64)
+
+    return FaceCluster(
+        id = clusterId,
+        sampleFace = faceBitmap
+    )
+}
+

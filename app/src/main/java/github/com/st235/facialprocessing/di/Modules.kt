@@ -50,7 +50,7 @@ private val interactorsModule = module {
 
     single { DetailsInteractor(get(), get()) }
 
-    single { SearchInteractor(get()) }
+    single { SearchInteractor(get(), get()) }
 
     single { ClustersInteractor(get(), get()) }
 

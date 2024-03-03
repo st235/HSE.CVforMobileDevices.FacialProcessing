@@ -25,8 +25,16 @@ class SearchViewModel(
                 searchInteractor.findPhotosByAttributes(searchAttributeIds)
             }
 
+            val searchAttributes = searchInteractor.getSearchAttributesByIds(searchAttributeIds)
+            val faceCluster = if (personId != null) {
+                searchInteractor.getFaceCluster(personId)
+            } else {
+                null
+            }
+
             _uiState.value = _uiState.value.copy(
-                person = personId,
+                faceCluster = faceCluster,
+                searchAttributeTypes = searchAttributes,
                 images = images,
             )
         }
