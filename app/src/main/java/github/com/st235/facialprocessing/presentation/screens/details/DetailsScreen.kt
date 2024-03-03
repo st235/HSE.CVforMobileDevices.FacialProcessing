@@ -34,6 +34,7 @@ import github.com.st235.facialprocessing.R
 import github.com.st235.facialprocessing.domain.model.FaceDescriptor
 import github.com.st235.facialprocessing.interactors.models.FaceCluster
 import github.com.st235.facialprocessing.interactors.models.FaceSearchAttribute
+import github.com.st235.facialprocessing.presentation.screens.Screen
 import github.com.st235.facialprocessing.presentation.theme.brightActiveFaceHighlightColor
 import github.com.st235.facialprocessing.presentation.theme.brightInactiveFaceHighlightColor
 import github.com.st235.facialprocessing.presentation.theme.facePreviewAreaBackground
@@ -120,11 +121,14 @@ fun DetailsScreen(
                         faceDescriptor = descriptor,
                         faceCluster = selectedFaceCluster,
                         faceSearchAttributes = searchAttributes,
+                        onClusterClick = { navController.navigate(Screen.Search.creteForCluster(it)) { popUpTo(Screen.Feed.route) } },
+                        onSearchAttributeClick = { navController.navigate(Screen.Search.createForAttribute(it.id)) { popUpTo(Screen.Feed.route) } },
                         modifier = Modifier.padding(16.dp)
                     )
                 } else {
                     ImageDescriptionView(
                         imageSearchAttributes = imageSearchAttributes,
+                        onSearchAttributeClick = { navController.navigate(Screen.Search.createForAttribute(it.id)) { popUpTo(Screen.Feed.route) } },
                         modifier = Modifier.padding(16.dp)
                     )
                 }
